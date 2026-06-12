@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FutGol - Selector de Versión</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 900px;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+        }
+        
+        .header h1 {
+            font-size: 56px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            font-size: 18px;
+            opacity: 0.95;
+            margin-bottom: 5px;
+        }
+        
+        .header .version {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+        
+        .card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+        }
+        
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.25);
+        }
+        
+        .card-banner {
+            padding: 50px 20px;
+            text-align: center;
+            color: white;
+            font-size: 80px;
+            font-weight: bold;
+        }
+        
+        .card-desktop .card-banner {
+            background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%);
+        }
+        
+        .card-mobile .card-banner {
+            background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+        }
+        
+        .card-content {
+            padding: 30px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .card-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 12px;
+        }
+        
+        .card-badge {
+            display: inline-block;
+            width: fit-content;
+            background: #f0f0f0;
+            color: #1a1a2e;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            letter-spacing: 0.5px;
+        }
+        
+        .card-description {
+            color: #666;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            flex: 1;
+        }
+        
+        .card-features {
+            background: #f9f9f9;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .card-features h4 {
+            color: #1a1a2e;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+        
+        .card-features ul {
+            list-style: none;
+        }
+        
+        .card-features li {
+            color: #666;
+            font-size: 13px;
+            padding: 6px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .card-features li:before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #00c853;
+            font-weight: bold;
+        }
+        
+        .card-btn {
+            background: linear-gradient(135deg, #00c853 0%, #00a844 100%);
+            color: white;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .card-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 25px rgba(0, 200, 83, 0.3);
+        }
+        
+        .card-btn:active {
+            transform: scale(0.98);
+        }
+        
+        footer {
+            text-align: center;
+            color: white;
+            opacity: 0.9;
+            font-size: 14px;
+            margin-top: 30px;
+        }
+        
+        .tech-info {
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 16px;
+            color: white;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        
+        .tech-info strong {
+            display: block;
+            margin-bottom: 8px;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚽ FutGol</h1>
+            <p>Sistema de Gestión de Campeonatos</p>
+            <div class="version">v1.0 - Completamente Funcional</div>
+        </div>
+        
+        <div class="grid">
+            <!-- DESKTOP -->
+            <a href="futgol_dashboard.html" class="card card-desktop">
+                <div class="card-banner">💻</div>
+                <div class="card-content">
+                    <div class="card-badge">Escritorio</div>
+                    <h2 class="card-title">Dashboard Desktop</h2>
+                    <p class="card-description">Versión completa para computadora con panel administrativo, sidebar de navegación y todas las funcionalidades del sistema.</p>
+                    <div class="card-features">
+                        <h4>Módulos:</h4>
+                        <ul>
+                            <li>Gestión de Torneos</li>
+                            <li>Administración de Equipos</li>
+                            <li>Control de Jugadores</li>
+                            <li>Registro de Partidos</li>
+                            <li>Tabla de Posiciones</li>
+                            <li>Estadísticas y Reportes</li>
+                        </ul>
+                    </div>
+                    <button class="card-btn">▶️ Abrir Dashboard</button>
+                </div>
+            </a>
+            
+            <!-- MOBILE -->
+            <a href="futgol_mobile.html" class="card card-mobile">
+                <div class="card-banner">📱</div>
+                <div class="card-content">
+                    <div class="card-badge">Móvil</div>
+                    <h2 class="card-title">Aplicación Móvil</h2>
+                    <p class="card-description">Versión optimizada para teléfonos y tablets con navegación inferior, interfaz táctil y diseño responsivo.</p>
+                    <div class="card-features">
+                        <h4>Características:</h4>
+                        <ul>
+                            <li>Inicio con Acciones Rápidas</li>
+                            <li>Visualización de Torneos</li>
+                            <li>Fixture en Tiempo Real</li>
+                            <li>Posiciones Actualizadas</li>
+                            <li>Sincronización Automática</li>
+                            <li>Interfaz Touch-Friendly</li>
+                        </ul>
+                    </div>
+                    <button class="card-btn">▶️ Abrir Móvil</button>
+                </div>
+            </a>
+        </div>
+        
+        <footer>
+            <div class="tech-info">
+                <strong>Tecnología: HTML5 + CSS3 + JavaScript Vanilla</strong>
+                Datos persistentes en localStorage • Sin servidor requerido • Compatible con todos los navegadores modernos
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

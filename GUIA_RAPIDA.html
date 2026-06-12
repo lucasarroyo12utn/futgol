@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FutGol - Guía Rápida</title>
+    <style>
+        :root {
+            --primary: #00c853;
+            --dark: #1a1a2e;
+            --bg: #f0f2f5;
+            --text: #333;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        header {
+            background: var(--dark);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            border-radius: 12px;
+            margin-bottom: 40px;
+        }
+        header h1 {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+        header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        .section {
+            background: white;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .section h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section h3 {
+            color: var(--dark);
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        .steps {
+            list-style: none;
+            counter-reset: step;
+        }
+        .steps li {
+            counter-increment: step;
+            margin-bottom: 15px;
+            padding-left: 30px;
+            position: relative;
+        }
+        .steps li:before {
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: var(--primary);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .feature {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+        }
+        .feature strong {
+            color: var(--dark);
+        }
+        .code {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,200,83,0.3);
+        }
+        .btn-secondary {
+            background: var(--dark);
+            color: white;
+        }
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(26,26,46,0.3);
+        }
+        .warning {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+        .success {
+            background: #e8f5e9;
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        th {
+            background: #f5f5f5;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚽ FutGol</h1>
+            <p>Sistema de Gestión de Campeonatos de Fútbol</p>
+            <p style="font-size: 14px; margin-top: 10px;">v1.0 - Completamente Funcional</p>
+        </header>
+
+        <div class="section">
+            <h2>🚀 Inicio Rápido</h2>
+            <p>La aplicación ya está lista para usar. Aquí te mostramos cómo empezar:</p>
+            
+            <h3>1. Abrir la Aplicación</h3>
+            <ul class="steps">
+                <li><strong>Desktop:</strong> Abre <code>futgol_dashboard.html</code> en tu navegador</li>
+                <li><strong>Móvil:</strong> Abre <code>futgol_mobile.html</code> en tu teléfono</li>
+            </ul>
+
+            <h3>2. Primeros Pasos</h3>
+            <ul class="steps">
+                <li>La aplicación carga automáticamente con 8 equipos y 3 torneos de ejemplo</li>
+                <li>Todos los datos se guardan en tu navegador (localStorage)</li>
+                <li>Puedes crear nuevos registros usando el botón <strong>"+"</strong></li>
+                <li>Los datos persisten entre sesiones</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>✨ Características Principales</h2>
+            <div class="features">
+                <div class="feature">
+                    <strong>📊 Dashboard</strong>
+                    <p>Resumen completo de estadísticas</p>
+                </div>
+                <div class="feature">
+                    <strong>🏆 Torneos</strong>
+                    <p>Crear y gestionar campeonatos</p>
+                </div>
+                <div class="feature">
+                    <strong>👥 Equipos</strong>
+                    <p>Registro de equipos y delegados</p>
+                </div>
+                <div class="feature">
+                    <strong>🧑 Jugadores</strong>
+                    <p>Base de datos de jugadores</p>
+                </div>
+                <div class="feature">
+                    <strong>⚽ Partidos</strong>
+                    <p>Fixture y resultados</p>
+                </div>
+                <div class="feature">
+                    <strong>📈 Estadísticas</strong>
+                    <p>Posiciones, goleadores, disciplina</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📝 Cómo Crear Registros</h2>
+
+            <h3>Crear un Nuevo Torneo</h3>
+            <ul class="steps">
+                <li>Haz clic en el botón <strong>"+  Nuevo Torneo"</strong> en la página de Torneos</li>
+                <li>O usa el botón FAB (+) en la esquina y selecciona "Crear Nuevo Torneo"</li>
+                <li>Completa los datos del formulario:
+                    <ul style="margin-top: 10px;">
+                        <li>✓ Nombre del torneo</li>
+                        <li>✓ Categoría (Primera, Sub-20, etc)</li>
+                        <li>✓ Formato (Liga, Eliminación, Grupos)</li>
+                        <li>✓ Fechas de inicio y fin</li>
+                        <li>✓ Máximo de equipos</li>
+                    </ul>
+                </li>
+                <li>Haz clic en <strong>"Guardar"</strong></li>
+            </ul>
+
+            <h3>Registrar un Equipo</h3>
+            <ul class="steps">
+                <li>Ve a la sección <strong>"Equipos"</strong></li>
+                <li>Haz clic en <strong>"+ Nuevo Equipo"</strong></li>
+                <li>Completa:
+                    <ul style="margin-top: 10px;">
+                        <li>✓ Nombre del equipo</li>
+                        <li>✓ Color identificador</li>
+                        <li>✓ Categoría</li>
+                        <li>✓ Delegado y teléfono</li>
+                    </ul>
+                </li>
+                <li>Guarda</li>
+            </ul>
+
+            <h3>Agregar Jugadores</h3>
+            <ul class="steps">
+                <li>Ve a la sección <strong>"Jugadores"</strong></li>
+                <li>Haz clic en <strong>"+ Nuevo Jugador"</strong></li>
+                <li>Rellena:
+                    <ul style="margin-top: 10px;">
+                        <li>✓ Nombre y apellido</li>
+                        <li>✓ Equipo al que pertenece</li>
+                        <li>✓ Posición (Arquero, Defensor, etc)</li>
+                        <li>✓ Edad</li>
+                    </ul>
+                </li>
+                <li>Confirma</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>💾 Persistencia de Datos</h2>
+            <p>La aplicación utiliza <strong>localStorage</strong> para guardar todos los datos:</p>
+            <div class="success">
+                ✅ Los datos se guardan automáticamente cuando creas o modificas registros
+            </div>
+            <div class="warning">
+                ⚠️ Los datos se guardan localmente en tu navegador. Si limpias el historial, se pueden perder.
+            </div>
+            <p style="margin-top: 15px;"><strong>Estructura de datos:</strong></p>
+            <table>
+                <tr>
+                    <th>Elemento</th>
+                    <th>Almacenado Como</th>
+                    <th>Descripción</th>
+                </tr>
+                <tr>
+                    <td>Torneos</td>
+                    <td><code>appData.torneos[]</code></td>
+                    <td>Lista de campeonatos</td>
+                </tr>
+                <tr>
+                    <td>Equipos</td>
+                    <td><code>appData.equipos[]</code></td>
+                    <td>Registro de equipos</td>
+                </tr>
+                <tr>
+                    <td>Jugadores</td>
+                    <td><code>appData.jugadores[]</code></td>
+                    <td>Base de jugadores</td>
+                </tr>
+                <tr>
+                    <td>Partidos</td>
+                    <td><code>appData.partidos[]</code></td>
+                    <td>Fixture y resultados</td>
+                </tr>
+                <tr>
+                    <td>Posiciones</td>
+                    <td><code>appData.posiciones[]</code></td>
+                    <td>Tabla de clasificación</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>📱 Versión Móvil</h2>
+            <p>La aplicación móvil incluye:</p>
+            <ul class="steps">
+                <li><strong>Inicio:</strong> Resumen con acciones rápidas</li>
+                <li><strong>Torneos:</strong> Lista completa con progreso</li>
+                <li><strong>Partidos:</strong> Fixture, resultados y próximos encuentros</li>
+                <li><strong>Posiciones:</strong> Tabla, goleadores y disciplina</li>
+                <li><strong>Más:</strong> Configuración y opciones</li>
+            </ul>
+            <p style="margin-top: 15px;"><strong>Características:</strong></p>
+            <div class="features">
+                <div class="feature">
+                    <strong>Responsive</strong>
+                    <p>Funciona en cualquier pantalla</p>
+                </div>
+                <div class="feature">
+                    <strong>Rápida</strong>
+                    <p>Carga instantáneamente</p>
+                </div>
+                <div class="feature">
+                    <strong>Offline</strong>
+                    <p>No requiere internet</p>
+                </div>
+                <div class="feature">
+                    <strong>Sincronizada</strong>
+                    <p>Comparte datos con desktop</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📊 Datos de Ejemplo</h2>
+            <p><strong>Equipos incluidos:</strong></p>
+            <table>
+                <tr>
+                    <th>Equipo</th>
+                    <th>Color</th>
+                    <th>Delegado</th>
+                    <th>Jugadores</th>
+                </tr>
+                <tr>
+                    <td>Atlético San Martín</td>
+                    <td style="color: #1565c0;">■ #1565c0</td>
+                    <td>Carlos Méndez</td>
+                    <td>22</td>
+                </tr>
+                <tr>
+                    <td>Deportivo Norte</td>
+                    <td style="color: #2e7d32;">■ #2e7d32</td>
+                    <td>Roberto Paz</td>
+                    <td>20</td>
+                </tr>
+                <tr>
+                    <td>Racing Tucumán</td>
+                    <td style="color: #c62828;">■ #c62828</td>
+                    <td>Martín Juárez</td>
+                    <td>21</td>
+                </tr>
+                <tr>
+                    <td>Boca Juniors FC</td>
+                    <td style="color: #0d47a1;">■ #0d47a1</td>
+                    <td>Fernando López</td>
+                    <td>23</td>
+                </tr>
+                <tr>
+                    <td>River Plate FC</td>
+                    <td style="color: #b71c1c;">■ #b71c1c</td>
+                    <td>Alejandro Ruiz</td>
+                    <td>22</td>
+                </tr>
+            </table>
+
+            <p style="margin-top: 15px;"><strong>Torneos incluidos:</strong></p>
+            <table>
+                <tr>
+                    <th>Torneo</th>
+                    <th>Estado</th>
+                    <th>Equipos</th>
+                    <th>Progreso</th>
+                </tr>
+                <tr>
+                    <td>Liga Apertura 2026</td>
+                    <td>🟢 En curso</td>
+                    <td>8</td>
+                    <td>57% (Fecha 8/14)</td>
+                </tr>
+                <tr>
+                    <td>Copa Ciudad 2026</td>
+                    <td>🟡 Inscripción</td>
+                    <td>8/12</td>
+                    <td>67% inscripto</td>
+                </tr>
+                <tr>
+                    <td>Torneo Relámpago Junio</td>
+                    <td>🔵 Programado</td>
+                    <td>4/8</td>
+                    <td>50% inscripto</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>🔒 Seguridad y Privacidad</h2>
+            <ul class="steps">
+                <li><strong>Sin servidor:</strong> Todos los datos se guardan localmente</li>
+                <li><strong>Sin conexión:</strong> Funciona offline completamente</li>
+                <li><strong>Privado:</strong> Los datos no se envían a ningún lado</li>
+                <li><strong>Seguro:</strong> Nadie puede ver tu información</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>💡 Tips y Trucos</h2>
+            <ul class="steps">
+                <li>Usa el botón FAB (+) para acceder a las acciones principales rápidamente</li>
+                <li>Los datos se sincronizan automáticamente entre la versión desktop y móvil</li>
+                <li>Puedes hacer clic en los filtros para ver estadísticas específicas</li>
+                <li>La tabla de posiciones se actualiza automáticamente con los resultados</li>
+                <li>Presiona ESC para cerrar modales rápidamente</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>📞 Ayuda y Soporte</h2>
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="alert('Versión 1.0.0\nÚltima actualización: Junio 2026')">ℹ️ Acerca de</button>
+                <button class="btn btn-secondary" onclick="alert('Datos:\n' + localStorage.getItem('futgolData').substring(0, 100) + '...')">💾 Ver Datos</button>
+                <button class="btn btn-secondary" onclick="if(confirm('¿Borrar todos los datos?')) {localStorage.clear(); location.reload();}">🗑️ Limpiar Datos</button>
+            </div>
+        </div>
+
+        <footer>
+            <p><strong>FutGol v1.0</strong> - Sistema de Gestión de Campeonatos de Fútbol</p>
+            <p>© 2026 - Todos los derechos reservados | Hecho con ⚽ para gestionar campeonatos</p>
+        </footer>
+    </div>
+</body>
+</html>

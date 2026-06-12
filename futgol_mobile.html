@@ -1,0 +1,2034 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>FutGol - App Móvil</title>
+    <style>
+        :root {
+            --accent: #00c853;
+            --accent-dark: #00a844;
+            --accent-light: #e8f5e9;
+            --dark: #1a1a2e;
+            --dark2: #16213e;
+            --bg: #f0f2f5;
+            --card: #ffffff;
+            --text: #1a1a2e;
+            --text2: #6c757d;
+            --text3: #adb5bd;
+            --border: #e9ecef;
+            --shadow: 0 2px 12px rgba(0,0,0,0.08);
+            --shadow-lg: 0 4px 24px rgba(0,0,0,0.12);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --transition: all 0.3s ease;
+            --win: #00c853;
+            --lose: #ff5252;
+            --draw: #ffc107;
+            --yellow-card: #fdd835;
+            --red-card: #f44336;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+            background: #2c2c2c;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 20px 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ========== PHONE FRAME ========== */
+        .phone-frame {
+            width: 390px;
+            min-height: 844px;
+            max-height: 844px;
+            background: var(--bg);
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 0 0 3px #333, 0 0 0 6px #1a1a1a, 0 20px 60px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ========== STATUS BAR (phone) ========== */
+        .phone-status-bar {
+            height: 54px;
+            background: var(--dark);
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            padding: 0 28px 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .phone-status-bar .time { font-weight: 700; }
+        .phone-status-bar .icons { display: flex; gap: 6px; font-size: 12px; }
+
+        /* ========== APP HEADER ========== */
+        .app-header {
+            background: var(--dark);
+            padding: 12px 20px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+
+        .app-logo {
+            font-size: 22px;
+            font-weight: 800;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .app-logo span { color: var(--accent); }
+
+        .app-header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .header-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .header-btn:active { transform: scale(0.9); }
+
+        .notif-dot {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 8px;
+            height: 8px;
+            background: var(--lose);
+            border-radius: 50%;
+            border: 2px solid var(--dark);
+        }
+
+        .user-mini {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent), #00897b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        /* ========== SCROLLABLE CONTENT ========== */
+        .app-content {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .app-content::-webkit-scrollbar { display: none; }
+
+        /* ========== PAGES ========== */
+        .app-page { display: none; padding: 20px; padding-bottom: 100px; }
+        .app-page.active { display: block; animation: fadeIn 0.3s ease; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ========== BOTTOM NAV ========== */
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: var(--card);
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-around;
+            padding-top: 10px;
+            box-shadow: 0 -2px 20px rgba(0,0,0,0.08);
+            z-index: 50;
+            flex-shrink: 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .nav-tab {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            padding: 4px 12px;
+            border-radius: 12px;
+            transition: var(--transition);
+            -webkit-tap-highlight-color: transparent;
+            border: none;
+            background: none;
+            min-width: 60px;
+        }
+
+        .nav-tab:active { transform: scale(0.9); }
+
+        .nav-tab .nav-icon {
+            font-size: 24px;
+            line-height: 1;
+            transition: var(--transition);
+        }
+
+        .nav-tab .nav-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text3);
+            transition: var(--transition);
+        }
+
+        .nav-tab.active .nav-icon { transform: scale(1.15); }
+        .nav-tab.active .nav-label { color: var(--accent); font-weight: 700; }
+
+        /* ========== CARDS ========== */
+        .m-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin-bottom: 16px;
+            transition: var(--transition);
+        }
+
+        .m-card:active { transform: scale(0.98); }
+
+        .m-card-header {
+            padding: 16px;
+            font-weight: 700;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .m-card-body { padding: 16px; }
+
+        /* ========== HOME PAGE ========== */
+        .greeting {
+            margin-bottom: 20px;
+        }
+
+        .greeting h1 {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text);
+        }
+
+        .greeting p {
+            font-size: 14px;
+            color: var(--text2);
+            margin-top: 2px;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .quick-actions::-webkit-scrollbar { display: none; }
+
+        .quick-action {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            min-width: 80px;
+        }
+
+        .quick-action:active { transform: scale(0.9); }
+
+        .qa-icon {
+            width: 54px;
+            height: 54px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: var(--transition);
+        }
+
+        .qa-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text2);
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        .qa-green { background: var(--accent-light); }
+        .qa-blue { background: #e3f2fd; }
+        .qa-orange { background: #fff3e0; }
+        .qa-purple { background: #f3e5f5; }
+
+        /* Section Title */
+        .section-title {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .section-title .see-all {
+            font-size: 13px;
+            color: var(--accent);
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Featured Match */
+        .featured-match {
+            background: linear-gradient(135deg, var(--dark), var(--dark2));
+            border-radius: var(--radius);
+            padding: 20px;
+            color: #fff;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .featured-match::after {
+            content: '⚽';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 80px;
+            opacity: 0.06;
+        }
+
+        .featured-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--accent);
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .featured-teams {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .featured-team {
+            text-align: center;
+            flex: 1;
+        }
+
+        .ft-badge {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin: 0 auto 8px;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .ft-name {
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        .featured-vs {
+            font-size: 20px;
+            font-weight: 800;
+            color: rgba(255,255,255,0.3);
+            padding: 0 8px;
+        }
+
+        .featured-info {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .featured-info span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Result Cards */
+        .result-card {
+            background: var(--card);
+            border-radius: var(--radius-sm);
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            box-shadow: var(--shadow);
+            gap: 12px;
+            transition: var(--transition);
+        }
+
+        .result-card:active { transform: scale(0.98); }
+
+        .result-status {
+            width: 4px;
+            height: 40px;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .result-teams {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .result-team {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+
+        .result-team-name {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+
+        .result-team-name .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .result-score {
+            font-weight: 800;
+            font-size: 16px;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .result-score.winner { color: var(--accent); }
+
+        .result-meta {
+            font-size: 11px;
+            color: var(--text3);
+            margin-left: 16px;
+            margin-top: 2px;
+        }
+
+        /* Mini Table */
+        .mini-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .mini-table thead th {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text3);
+            font-weight: 600;
+            padding: 8px 6px;
+            text-align: left;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .mini-table thead th:last-child { text-align: right; }
+
+        .mini-table tbody td {
+            padding: 10px 6px;
+            font-size: 13px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .mini-table tbody tr:last-child td { border-bottom: none; }
+
+        .mini-table .pos {
+            font-weight: 800;
+            width: 24px;
+            text-align: center;
+        }
+
+        .mini-table .team {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mini-table .pts {
+            font-weight: 800;
+            font-size: 15px;
+            text-align: right;
+        }
+
+        .pos-gold { color: #f9a825; }
+        .pos-silver { color: #78909c; }
+        .pos-bronze { color: #ef6c00; }
+
+        /* ========== TORNEOS PAGE ========== */
+        .torneo-card {
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .torneo-card:active { transform: scale(0.98); }
+
+        .torneo-banner {
+            padding: 24px 20px;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .torneo-banner::after {
+            content: '';
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            width: 100px;
+            height: 100px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+
+        .bg-1 { background: linear-gradient(135deg, #1a1a2e, #0f3460); }
+        .bg-2 { background: linear-gradient(135deg, #00c853, #00897b); }
+        .bg-3 { background: linear-gradient(135deg, #ff9800, #f44336); }
+
+        .torneo-banner .torneo-emoji {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .torneo-banner h3 {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .torneo-banner .torneo-sub {
+            font-size: 13px;
+            opacity: 0.8;
+        }
+
+        .torneo-status-pill {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(4px);
+        }
+
+        .torneo-details {
+            background: var(--card);
+            padding: 16px 20px;
+        }
+
+        .torneo-stats {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .torneo-stat-value {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text);
+        }
+
+        .torneo-stat-label {
+            font-size: 11px;
+            color: var(--text3);
+            margin-top: 2px;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 1s ease;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text3);
+            margin-top: 6px;
+        }
+
+        /* ========== PARTIDOS PAGE ========== */
+        .date-pills {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .date-pills::-webkit-scrollbar { display: none; }
+
+        .date-pill {
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            border: 2px solid var(--border);
+            background: var(--card);
+            color: var(--text2);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: var(--transition);
+        }
+
+        .date-pill:active { transform: scale(0.95); }
+
+        .date-pill.active {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        .match-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 18px;
+            margin-bottom: 12px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .match-card:active { transform: scale(0.98); }
+
+        .match-status-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .match-status {
+            padding: 3px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .ms-final { background: var(--accent-light); color: var(--accent-dark); }
+        .ms-live { background: #fce4ec; color: #c62828; }
+        .ms-upcoming { background: #e3f2fd; color: #1565c0; }
+
+        .match-cancha {
+            font-size: 11px;
+            color: var(--text3);
+        }
+
+        .match-teams {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .match-team {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .match-team.away {
+            flex-direction: row-reverse;
+            text-align: right;
+        }
+
+        .mt-badge {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 800;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .mt-info { line-height: 1.3; }
+
+        .mt-name {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .mt-sub {
+            font-size: 11px;
+            color: var(--text3);
+        }
+
+        .match-score {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0 8px;
+        }
+
+        .score-num {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--text);
+            min-width: 24px;
+            text-align: center;
+        }
+
+        .score-sep {
+            font-size: 18px;
+            color: var(--text3);
+            font-weight: 300;
+        }
+
+        .match-time-display {
+            text-align: center;
+            padding: 0 6px;
+        }
+
+        .match-time-display .time-big {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text);
+        }
+
+        .match-time-display .time-label {
+            font-size: 10px;
+            color: var(--text3);
+        }
+
+        /* ========== POSICIONES PAGE ========== */
+        .tab-bar {
+            display: flex;
+            background: var(--card);
+            border-radius: var(--radius-sm);
+            padding: 4px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .tab-item {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text2);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .tab-item:active { transform: scale(0.95); }
+        .tab-item.active { background: var(--accent); color: #fff; }
+
+        .standings-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .standings-table thead th {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text3);
+            font-weight: 700;
+            padding: 10px 5px;
+            text-align: center;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .standings-table thead th:nth-child(2) { text-align: left; }
+
+        .standings-table tbody td {
+            padding: 12px 5px;
+            font-size: 13px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .standings-table tbody td:nth-child(2) { text-align: left; }
+
+        .standings-table tbody tr:last-child td { border-bottom: none; }
+
+        .standings-table .st-pos {
+            font-weight: 800;
+            font-size: 14px;
+        }
+
+        .standings-table .st-team {
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+        }
+
+        .standings-table .st-pts {
+            font-weight: 800;
+            font-size: 15px;
+            color: var(--accent);
+        }
+
+        .st-highlight {
+            background: var(--accent-light);
+        }
+
+        /* Scorer list mobile */
+        .m-scorer {
+            display: flex;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border);
+            gap: 12px;
+        }
+
+        .m-scorer:last-child { border-bottom: none; }
+
+        .m-scorer-rank {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .m-scorer-info { flex: 1; }
+        .m-scorer-name { font-weight: 700; font-size: 14px; }
+        .m-scorer-team { font-size: 12px; color: var(--text2); }
+        .m-scorer-goals { font-size: 22px; font-weight: 800; color: var(--accent); }
+
+        /* ========== MAS PAGE ========== */
+        .more-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 30px;
+        }
+
+        .more-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 20px 10px;
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .more-item:active { transform: scale(0.92); }
+
+        .more-icon {
+            font-size: 30px;
+            line-height: 1;
+        }
+
+        .more-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text);
+            text-align: center;
+        }
+
+        .app-version {
+            text-align: center;
+            color: var(--text3);
+            font-size: 12px;
+            padding: 20px;
+        }
+
+        /* ========== UTILITY ========== */
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+
+        .badge-sm {
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .page-title {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .page-subtitle {
+            font-size: 13px;
+            color: var(--text2);
+            margin-bottom: 20px;
+        }
+
+        .selector-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: var(--card);
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: var(--shadow);
+            margin-bottom: 16px;
+            cursor: pointer;
+        }
+
+        /* Discipline table */
+        .disc-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            gap: 12px;
+        }
+
+        .disc-item:last-child { border-bottom: none; }
+
+        .disc-cards {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            font-weight: 700;
+            font-size: 14px;
+            min-width: 70px;
+            justify-content: flex-end;
+        }
+
+        .disc-card-icon {
+            width: 16px;
+            height: 20px;
+            border-radius: 3px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+<div class="phone-frame">
+
+    <!-- Phone Status Bar -->
+    <div class="phone-status-bar">
+        <span class="time">9:41</span>
+        <span class="icons">📶 📡 🔋</span>
+    </div>
+
+    <!-- App Header -->
+    <div class="app-header">
+        <div class="app-logo">⚽ <span>Fut</span>Gol</div>
+        <div class="app-header-actions">
+            <button class="header-btn">
+                🔔
+                <span class="notif-dot"></span>
+            </button>
+            <div class="user-mini">LA</div>
+        </div>
+    </div>
+
+    <!-- Scrollable Content -->
+    <div class="app-content">
+
+        <!-- ===== PAGE: INICIO ===== -->
+        <div class="app-page active" id="m-inicio">
+            <div class="greeting">
+                <h1>Hola, Lucas 👋</h1>
+                <p>Resumen de tus campeonatos</p>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <div class="quick-action">
+                    <div class="qa-icon qa-green">🏆</div>
+                    <div class="qa-label">Nuevo<br>Torneo</div>
+                </div>
+                <div class="quick-action">
+                    <div class="qa-icon qa-blue">👥</div>
+                    <div class="qa-label">Nuevo<br>Equipo</div>
+                </div>
+                <div class="quick-action">
+                    <div class="qa-icon qa-orange">⚽</div>
+                    <div class="qa-label">Cargar<br>Resultado</div>
+                </div>
+                <div class="quick-action">
+                    <div class="qa-icon qa-purple">🧑</div>
+                    <div class="qa-label">Nuevo<br>Jugador</div>
+                </div>
+            </div>
+
+            <!-- Featured Match -->
+            <div class="section-title">Próximo Partido <span class="see-all">Ver todos →</span></div>
+            <div class="featured-match">
+                <div class="featured-label">⚡ Sábado 14 de junio</div>
+                <div class="featured-teams">
+                    <div class="featured-team">
+                        <div class="ft-badge" style="background:#1565c0">ASM</div>
+                        <div class="ft-name">Atlético<br>San Martín</div>
+                    </div>
+                    <div class="featured-vs">VS</div>
+                    <div class="featured-team">
+                        <div class="ft-badge" style="background:#c62828">RT</div>
+                        <div class="ft-name">Racing<br>Tucumán</div>
+                    </div>
+                </div>
+                <div class="featured-info">
+                    <span>🕐 15:00 hs</span>
+                    <span>🏟️ Cancha N°1</span>
+                    <span>📋 Fecha 9</span>
+                </div>
+            </div>
+
+            <!-- Resultados Recientes -->
+            <div class="section-title">Resultados Recientes <span class="see-all">Ver todos →</span></div>
+
+            <div class="result-card">
+                <div class="result-status" style="background:var(--win)"></div>
+                <div class="result-teams">
+                    <div class="result-team">
+                        <div class="result-team-name"><span class="dot" style="background:#1565c0"></span> Atlético San Martín</div>
+                        <div class="result-score winner">3</div>
+                    </div>
+                    <div class="result-team">
+                        <div class="result-team-name"><span class="dot" style="background:#ef6c00"></span> Independiente Sur</div>
+                        <div class="result-score">1</div>
+                    </div>
+                    <div class="result-meta">Fecha 8 · Cancha N°1 · Hoy</div>
+                </div>
+            </div>
+
+            <div class="result-card">
+                <div class="result-status" style="background:var(--draw)"></div>
+                <div class="result-teams">
+                    <div class="result-team">
+                        <div class="result-team-name"><span class="dot" style="background:#0d47a1"></span> Boca Juniors FC</div>
+                        <div class="result-score">2</div>
+                    </div>
+                    <div class="result-team">
+                        <div class="result-team-name"><span class="dot" style="background:#6a1b9a"></span> Club Social Belgrano</div>
+                        <div class="result-score">2</div>
+                    </div>
+                    <div class="result-meta">Fecha 8 · Cancha N°2 · Hoy</div>
+                </div>
+            </div>
+
+            <div class="result-card">
+                <div class="result-status" style="background:var(--win)"></div>
+                <div class="result-teams">
+                    <div class="result-team">
+                        <div class="result-team-name"><span class="dot" style="background:#2e7d32"></span> Deportivo Norte</div>
+                        <div class="result-score winner">2</div>
+                    </div>
+                    <div class="result-team">
+                        <div class="result-team-name"><span class="dot" style="background:#00838f"></span> San Lorenzo FC</div>
+                        <div class="result-score">0</div>
+                    </div>
+                    <div class="result-meta">Fecha 8 · Cancha N°3 · Ayer</div>
+                </div>
+            </div>
+
+            <!-- Mini Tabla -->
+            <div class="section-title" style="margin-top:24px">Posiciones — Liga Apertura <span class="see-all">Ver todo →</span></div>
+            <div class="m-card">
+                <div class="m-card-body" style="padding:10px 14px;">
+                    <table class="mini-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Equipo</th>
+                                <th>PJ</th>
+                                <th style="text-align:right">PTS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="pos pos-gold">1</td>
+                                <td><span class="team"><span class="dot" style="background:#1565c0"></span> Atl. San Martín</span></td>
+                                <td>8</td>
+                                <td class="pts" style="color:var(--accent)">19</td>
+                            </tr>
+                            <tr>
+                                <td class="pos pos-silver">2</td>
+                                <td><span class="team"><span class="dot" style="background:#2e7d32"></span> Deportivo Norte</span></td>
+                                <td>8</td>
+                                <td class="pts">17</td>
+                            </tr>
+                            <tr>
+                                <td class="pos pos-bronze">3</td>
+                                <td><span class="team"><span class="dot" style="background:#c62828"></span> Racing Tucumán</span></td>
+                                <td>8</td>
+                                <td class="pts">16</td>
+                            </tr>
+                            <tr>
+                                <td class="pos">4</td>
+                                <td><span class="team"><span class="dot" style="background:#0d47a1"></span> Boca Juniors FC</span></td>
+                                <td>8</td>
+                                <td class="pts">14</td>
+                            </tr>
+                            <tr>
+                                <td class="pos">5</td>
+                                <td><span class="team"><span class="dot" style="background:#b71c1c"></span> River Plate FC</span></td>
+                                <td>8</td>
+                                <td class="pts">12</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== PAGE: TORNEOS ===== -->
+        <div class="app-page" id="m-torneos">
+            <div class="page-title">🏆 Mis Torneos</div>
+            <div class="page-subtitle">3 torneos en gestión</div>
+
+            <div class="torneo-card">
+                <div class="torneo-banner bg-1">
+                    <div class="torneo-emoji">🏆</div>
+                    <h3>Liga Apertura 2026</h3>
+                    <div class="torneo-sub">Primera · Todos contra todos</div>
+                    <div class="torneo-status-pill">⚡ En curso</div>
+                </div>
+                <div class="torneo-details">
+                    <div class="torneo-stats">
+                        <div>
+                            <div class="torneo-stat-value">8</div>
+                            <div class="torneo-stat-label">Equipos</div>
+                        </div>
+                        <div>
+                            <div class="torneo-stat-value">156</div>
+                            <div class="torneo-stat-label">Jugadores</div>
+                        </div>
+                        <div>
+                            <div class="torneo-stat-value">28</div>
+                            <div class="torneo-stat-label">Partidos</div>
+                        </div>
+                        <div>
+                            <div class="torneo-stat-value">73</div>
+                            <div class="torneo-stat-label">Goles</div>
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width:57%;background:var(--accent)"></div>
+                    </div>
+                    <div class="progress-label">
+                        <span>Fecha 8 de 14</span>
+                        <span>57% completado</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="torneo-card">
+                <div class="torneo-banner bg-2">
+                    <div class="torneo-emoji">🏅</div>
+                    <h3>Copa Ciudad 2026</h3>
+                    <div class="torneo-sub">Libre · Grupos + Eliminación</div>
+                    <div class="torneo-status-pill">📝 Inscripción</div>
+                </div>
+                <div class="torneo-details">
+                    <div class="torneo-stats">
+                        <div>
+                            <div class="torneo-stat-value">8<span style="font-size:13px;color:var(--text3)">/12</span></div>
+                            <div class="torneo-stat-label">Equipos</div>
+                        </div>
+                        <div>
+                            <div class="torneo-stat-value">128</div>
+                            <div class="torneo-stat-label">Jugadores</div>
+                        </div>
+                        <div>
+                            <div class="torneo-stat-value">0</div>
+                            <div class="torneo-stat-label">Partidos</div>
+                        </div>
+                        <div>
+                            <div class="torneo-stat-value">0</div>
+                            <div class="torneo-stat-label">Goles</div>
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width:67%;background:#00897b"></div>
+                    </div>
+                    <div class="progress-label">
+                        <span>8 de 12 equipos</span>
+                        <span>Cierre: 10/07</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="torneo-card">
+                <div class="torneo-banner bg-3">
+                    <div class="torneo-emoji">⚡</div>
+                    <h3>Torneo Relámpago Junio</h3>
+                    <div class="torneo-sub">Sub-20 · Eliminación directa</div>
+                    <div class="torneo-status-pill">📅 Programado</div>
+                </div>
+                <div class="torneo-details">
+                    <div class="torneo-stats">
+                        <div>
+                            <div class="torneo-stat-value">4<span style="font-size:13px;color:var(--text3)">/8</span></div>
+                            <div class="torneo-stat-label">Equipos</div>
+                        </div>
+                        <div>
+                            <div class="torneo-stat-value">64</div>
+                            <div class="torneo-stat-label">Jugadores</div>
+                        </div>
+                        <div>
+                            <div class="torneo-stat-value">7</div>
+                            <div class="torneo-stat-label">Partidos</div>
+                        </div>
+                        <div>
+                            <div class="torneo-stat-value">0</div>
+                            <div class="torneo-stat-label">Goles</div>
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width:50%;background:#ff9800"></div>
+                    </div>
+                    <div class="progress-label">
+                        <span>4 de 8 inscriptos</span>
+                        <span>28/06/2026</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== PAGE: PARTIDOS ===== -->
+        <div class="app-page" id="m-partidos">
+            <div class="page-title">⚽ Partidos</div>
+            <div class="page-subtitle">Liga Apertura 2026</div>
+
+            <!-- Date selector -->
+            <div class="date-pills">
+                <div class="date-pill">F7</div>
+                <div class="date-pill active">F8</div>
+                <div class="date-pill">F9</div>
+                <div class="date-pill">F10</div>
+                <div class="date-pill">F11</div>
+                <div class="date-pill">F12</div>
+            </div>
+
+            <!-- Match 1 - Finalizado -->
+            <div class="match-card">
+                <div class="match-status-bar">
+                    <span class="match-status ms-final">✅ Finalizado</span>
+                    <span class="match-cancha">🏟️ Cancha N°1 · 12/06</span>
+                </div>
+                <div class="match-teams">
+                    <div class="match-team">
+                        <div class="mt-badge" style="background:#1565c0">ASM</div>
+                        <div class="mt-info">
+                            <div class="mt-name">Atl. San Martín</div>
+                            <div class="mt-sub">⚽ Rodríguez (2), Molina</div>
+                        </div>
+                    </div>
+                    <div class="match-score">
+                        <span class="score-num" style="color:var(--accent)">3</span>
+                        <span class="score-sep">-</span>
+                        <span class="score-num">1</span>
+                    </div>
+                    <div class="match-team away">
+                        <div class="mt-badge" style="background:#ef6c00">IS</div>
+                        <div class="mt-info">
+                            <div class="mt-name">Independiente S.</div>
+                            <div class="mt-sub">⚽ Vargas</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Match 2 - Finalizado -->
+            <div class="match-card">
+                <div class="match-status-bar">
+                    <span class="match-status ms-final">✅ Finalizado</span>
+                    <span class="match-cancha">🏟️ Cancha N°2 · 12/06</span>
+                </div>
+                <div class="match-teams">
+                    <div class="match-team">
+                        <div class="mt-badge" style="background:#0d47a1">BJF</div>
+                        <div class="mt-info">
+                            <div class="mt-name">Boca Juniors FC</div>
+                            <div class="mt-sub">⚽ Romero, Herrera</div>
+                        </div>
+                    </div>
+                    <div class="match-score">
+                        <span class="score-num">2</span>
+                        <span class="score-sep">-</span>
+                        <span class="score-num">2</span>
+                    </div>
+                    <div class="match-team away">
+                        <div class="mt-badge" style="background:#6a1b9a">CSB</div>
+                        <div class="mt-info">
+                            <div class="mt-name">C. S. Belgrano</div>
+                            <div class="mt-sub">⚽ Luna, Paz</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Match 3 - Finalizado -->
+            <div class="match-card">
+                <div class="match-status-bar">
+                    <span class="match-status ms-final">✅ Finalizado</span>
+                    <span class="match-cancha">🏟️ Cancha N°3 · 12/06</span>
+                </div>
+                <div class="match-teams">
+                    <div class="match-team">
+                        <div class="mt-badge" style="background:#2e7d32">DN</div>
+                        <div class="mt-info">
+                            <div class="mt-name">Deportivo Norte</div>
+                            <div class="mt-sub">⚽ Pereyra, Sosa</div>
+                        </div>
+                    </div>
+                    <div class="match-score">
+                        <span class="score-num" style="color:var(--accent)">2</span>
+                        <span class="score-sep">-</span>
+                        <span class="score-num">0</span>
+                    </div>
+                    <div class="match-team away">
+                        <div class="mt-badge" style="background:#00838f">SLF</div>
+                        <div class="mt-info">
+                            <div class="mt-name">San Lorenzo FC</div>
+                            <div class="mt-sub">&nbsp;</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Match 4 - Próximo -->
+            <div class="match-card">
+                <div class="match-status-bar">
+                    <span class="match-status ms-upcoming">🕐 Próximo</span>
+                    <span class="match-cancha">🏟️ Cancha N°1 · 14/06</span>
+                </div>
+                <div class="match-teams">
+                    <div class="match-team">
+                        <div class="mt-badge" style="background:#c62828">RT</div>
+                        <div class="mt-info">
+                            <div class="mt-name">Racing Tucumán</div>
+                            <div class="mt-sub">3° — 16 pts</div>
+                        </div>
+                    </div>
+                    <div class="match-time-display">
+                        <div class="time-big">17:00</div>
+                        <div class="time-label">Sáb 14/06</div>
+                    </div>
+                    <div class="match-team away">
+                        <div class="mt-badge" style="background:#b71c1c">RPF</div>
+                        <div class="mt-info">
+                            <div class="mt-name">River Plate FC</div>
+                            <div class="mt-sub">5° — 12 pts</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== PAGE: POSICIONES ===== -->
+        <div class="app-page" id="m-posiciones">
+            <div class="page-title">📊 Posiciones</div>
+            <div class="page-subtitle">Liga Apertura 2026 · Fecha 8</div>
+
+            <div class="selector-pill">🏆 Liga Apertura 2026 ▾</div>
+
+            <!-- Sub tabs -->
+            <div class="tab-bar">
+                <div class="tab-item active" onclick="showSubTab(this, 'subtab-pos')">Posiciones</div>
+                <div class="tab-item" onclick="showSubTab(this, 'subtab-gol')">Goleadores</div>
+                <div class="tab-item" onclick="showSubTab(this, 'subtab-disc')">Disciplina</div>
+            </div>
+
+            <!-- Posiciones sub-tab -->
+            <div class="subtab active" id="subtab-pos">
+                <div class="m-card">
+                    <div class="m-card-body" style="padding:8px 12px;">
+                        <table class="standings-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Equipo</th>
+                                    <th>PJ</th>
+                                    <th>PG</th>
+                                    <th>PE</th>
+                                    <th>PP</th>
+                                    <th>GF</th>
+                                    <th>GC</th>
+                                    <th>DG</th>
+                                    <th>PTS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="st-highlight">
+                                    <td class="st-pos pos-gold">1</td>
+                                    <td><span class="st-team"><span class="dot" style="background:#1565c0"></span>Atl. San Martín</span></td>
+                                    <td>8</td><td>6</td><td>1</td><td>1</td><td>18</td><td>7</td>
+                                    <td style="color:var(--accent);font-weight:700">+11</td>
+                                    <td class="st-pts">19</td>
+                                </tr>
+                                <tr>
+                                    <td class="st-pos pos-silver">2</td>
+                                    <td><span class="st-team"><span class="dot" style="background:#2e7d32"></span>Dep. Norte</span></td>
+                                    <td>8</td><td>5</td><td>2</td><td>1</td><td>16</td><td>8</td>
+                                    <td style="color:var(--accent);font-weight:700">+8</td>
+                                    <td class="st-pts">17</td>
+                                </tr>
+                                <tr>
+                                    <td class="st-pos pos-bronze">3</td>
+                                    <td><span class="st-team"><span class="dot" style="background:#c62828"></span>Racing Tuc.</span></td>
+                                    <td>8</td><td>5</td><td>1</td><td>2</td><td>14</td><td>9</td>
+                                    <td style="color:var(--accent);font-weight:700">+5</td>
+                                    <td class="st-pts">16</td>
+                                </tr>
+                                <tr>
+                                    <td class="st-pos">4</td>
+                                    <td><span class="st-team"><span class="dot" style="background:#0d47a1"></span>Boca Jrs FC</span></td>
+                                    <td>8</td><td>4</td><td>2</td><td>2</td><td>13</td><td>10</td>
+                                    <td style="color:var(--accent);font-weight:700">+3</td>
+                                    <td class="st-pts">14</td>
+                                </tr>
+                                <tr>
+                                    <td class="st-pos">5</td>
+                                    <td><span class="st-team"><span class="dot" style="background:#b71c1c"></span>River Plate</span></td>
+                                    <td>8</td><td>3</td><td>3</td><td>2</td><td>12</td><td>10</td>
+                                    <td style="color:var(--accent);font-weight:700">+2</td>
+                                    <td class="st-pts">12</td>
+                                </tr>
+                                <tr>
+                                    <td class="st-pos">6</td>
+                                    <td><span class="st-team"><span class="dot" style="background:#6a1b9a"></span>C. S. Belgrano</span></td>
+                                    <td>8</td><td>2</td><td>3</td><td>3</td><td>10</td><td>11</td>
+                                    <td style="color:var(--lose);font-weight:700">-1</td>
+                                    <td class="st-pts">9</td>
+                                </tr>
+                                <tr>
+                                    <td class="st-pos">7</td>
+                                    <td><span class="st-team"><span class="dot" style="background:#00838f"></span>San Lorenzo</span></td>
+                                    <td>8</td><td>1</td><td>2</td><td>5</td><td>6</td><td>14</td>
+                                    <td style="color:var(--lose);font-weight:700">-8</td>
+                                    <td class="st-pts">5</td>
+                                </tr>
+                                <tr>
+                                    <td class="st-pos">8</td>
+                                    <td><span class="st-team"><span class="dot" style="background:#ef6c00"></span>Independiente</span></td>
+                                    <td>8</td><td>0</td><td>2</td><td>6</td><td>5</td><td>19</td>
+                                    <td style="color:var(--lose);font-weight:700">-14</td>
+                                    <td class="st-pts">2</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Goleadores sub-tab -->
+            <div class="subtab" id="subtab-gol" style="display:none">
+                <div class="m-card">
+                    <div class="m-card-body">
+                        <div class="m-scorer">
+                            <div class="m-scorer-rank" style="background:#fff9c4;color:#f9a825">1</div>
+                            <div class="m-scorer-info">
+                                <div class="m-scorer-name">Matías Rodríguez</div>
+                                <div class="m-scorer-team">Atlético San Martín</div>
+                            </div>
+                            <div class="m-scorer-goals">9</div>
+                        </div>
+                        <div class="m-scorer">
+                            <div class="m-scorer-rank" style="background:#eceff1;color:#546e7a">2</div>
+                            <div class="m-scorer-info">
+                                <div class="m-scorer-name">Franco Díaz</div>
+                                <div class="m-scorer-team">Racing Tucumán</div>
+                            </div>
+                            <div class="m-scorer-goals">7</div>
+                        </div>
+                        <div class="m-scorer">
+                            <div class="m-scorer-rank" style="background:#ffe0b2;color:#ef6c00">3</div>
+                            <div class="m-scorer-info">
+                                <div class="m-scorer-name">Nicolás Pereyra</div>
+                                <div class="m-scorer-team">Deportivo Norte</div>
+                            </div>
+                            <div class="m-scorer-goals">6</div>
+                        </div>
+                        <div class="m-scorer">
+                            <div class="m-scorer-rank" style="background:var(--bg);color:var(--text2)">4</div>
+                            <div class="m-scorer-info">
+                                <div class="m-scorer-name">Agustín Romero</div>
+                                <div class="m-scorer-team">Boca Juniors FC</div>
+                            </div>
+                            <div class="m-scorer-goals">5</div>
+                        </div>
+                        <div class="m-scorer">
+                            <div class="m-scorer-rank" style="background:var(--bg);color:var(--text2)">5</div>
+                            <div class="m-scorer-info">
+                                <div class="m-scorer-name">Leandro Castro</div>
+                                <div class="m-scorer-team">River Plate FC</div>
+                            </div>
+                            <div class="m-scorer-goals">4</div>
+                        </div>
+                        <div class="m-scorer">
+                            <div class="m-scorer-rank" style="background:var(--bg);color:var(--text2)">6</div>
+                            <div class="m-scorer-info">
+                                <div class="m-scorer-name">Sebastián Molina</div>
+                                <div class="m-scorer-team">Atlético San Martín</div>
+                            </div>
+                            <div class="m-scorer-goals">3</div>
+                        </div>
+                        <div class="m-scorer">
+                            <div class="m-scorer-rank" style="background:var(--bg);color:var(--text2)">7</div>
+                            <div class="m-scorer-info">
+                                <div class="m-scorer-name">Ramiro Sosa</div>
+                                <div class="m-scorer-team">Deportivo Norte</div>
+                            </div>
+                            <div class="m-scorer-goals">3</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Disciplina sub-tab -->
+            <div class="subtab" id="subtab-disc" style="display:none">
+                <div class="m-card">
+                    <div class="m-card-body">
+                        <div class="disc-item">
+                            <div class="m-scorer-rank" style="background:#fce4ec;color:#c62828">1</div>
+                            <div class="m-scorer-info">
+                                <div class="m-scorer-name">Tomás Aguirre</div>
+                                <div class="m-scorer-team">San Lorenzo FC</div>
+                            </div>
+                            <div class="disc-cards">
+                                <span>5</span><span class="disc-card-icon" style="background:var(--yellow-card)"></span>
+                                <span>0</span><span class="disc-card-icon" style="background:var(--red-card)"></span>
+                            </div>
+                        </div>
+                        <div class="disc-item">
+                            <div class="m-scorer-rank" style="background:#fce4ec;color:#c62828">2</div>
+                            <div class="m-scorer-info">
+                                <div class="m-scorer-name">Leandro Castro</div>
+                                <div class="m-scorer-team">River Plate FC</div>
+                            </div>
+                            <div class="disc-cards">
+                                <span>4</span><span class="disc-card-icon" style="background:var(--yellow-card)"></span>
+                                <span>0</span><span class="disc-card-icon" style="background:var(--red-card)"></span>
+                            </div>
+                        </div>
+                        <div class="disc-item">
+                            <div class="m-scorer-rank" style="background:#fce4ec;color:#c62828">3</div>
+                            <div class="m-scorer-info">
+                                <div class="m-scorer-name">Luciano Fernández</div>
+                                <div class="m-scorer-team">Independiente Sur</div>
+                            </div>
+                            <div class="disc-cards">
+                                <span>3</span><span class="disc-card-icon" style="background:var(--yellow-card)"></span>
+                                <span>1</span><span class="disc-card-icon" style="background:var(--red-card)"></span>
+                            </div>
+                        </div>
+                        <div class="disc-item">
+                            <div class="m-scorer-rank" style="background:#fff3e0;color:#ef6c00">4</div>
+                            <div class="m-scorer-info">
+                                <div class="m-scorer-name">Nicolás Pereyra</div>
+                                <div class="m-scorer-team">Deportivo Norte</div>
+                            </div>
+                            <div class="disc-cards">
+                                <span>3</span><span class="disc-card-icon" style="background:var(--yellow-card)"></span>
+                                <span>0</span><span class="disc-card-icon" style="background:var(--red-card)"></span>
+                            </div>
+                        </div>
+                        <div class="disc-item">
+                            <div class="m-scorer-rank" style="background:#fff3e0;color:#ef6c00">5</div>
+                            <div class="m-scorer-info">
+                                <div class="m-scorer-name">Matías Rodríguez</div>
+                                <div class="m-scorer-team">Atlético San Martín</div>
+                            </div>
+                            <div class="disc-cards">
+                                <span>2</span><span class="disc-card-icon" style="background:var(--yellow-card)"></span>
+                                <span>0</span><span class="disc-card-icon" style="background:var(--red-card)"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== PAGE: MAS ===== -->
+        <div class="app-page" id="m-mas">
+            <div class="page-title">☰ Más Opciones</div>
+            <div class="page-subtitle">Accede a todas las funcionalidades</div>
+
+            <!-- User profile card -->
+            <div class="m-card" style="margin-bottom:24px">
+                <div class="m-card-body" style="display:flex;align-items:center;gap:14px">
+                    <div style="width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,var(--accent),#00897b);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px;flex-shrink:0">LA</div>
+                    <div style="flex:1">
+                        <div style="font-weight:700;font-size:16px">Lucas Arroyo</div>
+                        <div style="font-size:13px;color:var(--text2)">Administrador</div>
+                    </div>
+                    <div style="font-size:20px;color:var(--text3)">→</div>
+                </div>
+            </div>
+
+            <div style="font-size:13px;font-weight:700;color:var(--text2);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px">Gestión</div>
+
+            <div class="more-grid">
+                <div class="more-item">
+                    <div class="more-icon">👥</div>
+                    <div class="more-label">Equipos</div>
+                </div>
+                <div class="more-item">
+                    <div class="more-icon">🧑</div>
+                    <div class="more-label">Jugadores</div>
+                </div>
+                <div class="more-item">
+                    <div class="more-icon">📅</div>
+                    <div class="more-label">Fixture</div>
+                </div>
+                <div class="more-item">
+                    <div class="more-icon">🏟️</div>
+                    <div class="more-label">Canchas</div>
+                </div>
+                <div class="more-item">
+                    <div class="more-icon">👨‍⚖️</div>
+                    <div class="more-label">Árbitros</div>
+                </div>
+                <div class="more-item">
+                    <div class="more-icon">💰</div>
+                    <div class="more-label">Pagos</div>
+                </div>
+            </div>
+
+            <div style="font-size:13px;font-weight:700;color:var(--text2);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px">Sistema</div>
+
+            <div class="more-grid">
+                <div class="more-item">
+                    <div class="more-icon">🔔</div>
+                    <div class="more-label">Notificaciones</div>
+                </div>
+                <div class="more-item">
+                    <div class="more-icon">📊</div>
+                    <div class="more-label">Reportes</div>
+                </div>
+                <div class="more-item">
+                    <div class="more-icon">⚙️</div>
+                    <div class="more-label">Configuración</div>
+                </div>
+            </div>
+
+            <div class="app-version">
+                ⚽ FutGol v1.0<br>
+                <span style="font-size:11px">Hecho con 💚 en Argentina</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <button class="nav-tab active" data-page="m-inicio">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">Inicio</span>
+        </button>
+        <button class="nav-tab" data-page="m-torneos">
+            <span class="nav-icon">🏆</span>
+            <span class="nav-label">Torneos</span>
+        </button>
+        <button class="nav-tab" data-page="m-partidos">
+            <span class="nav-icon">⚽</span>
+            <span class="nav-label">Partidos</span>
+        </button>
+        <button class="nav-tab" data-page="m-posiciones">
+            <span class="nav-icon">📊</span>
+            <span class="nav-label">Posiciones</span>
+        </button>
+        <button class="nav-tab" data-page="m-mas">
+            <span class="nav-icon">☰</span>
+            <span class="nav-label">Más</span>
+        </button>
+    </div>
+
+</div>
+
+<script>
+        // ========== DATA MANAGEMENT ==========
+        const appData = {
+            torneos: [],
+            equipos: [],
+            jugadores: [],
+            partidos: [],
+            posiciones: [],
+            canchas: [],
+            arbitros: [],
+            disciplinas: [],
+            pagos: []
+        };
+
+        function loadData() {
+            const stored = localStorage.getItem('futgolData');
+            if (stored) {
+                try {
+                    const data = JSON.parse(stored);
+                    Object.assign(appData, data);
+                } catch (e) {
+                    initializeDefaultData();
+                }
+            } else {
+                initializeDefaultData();
+            }
+        }
+
+        function initializeDefaultData() {
+            appData.torneos = [
+                {id: 'torneo_001', nombre: 'Liga Apertura 2026', emoji: '🏆', estado: 'en-curso', categoria: 'Primera', formato: 'Liga', equipos: 8},
+                {id: 'torneo_002', nombre: 'Copa Ciudad 2026', emoji: '🏅', estado: 'inscripcion', categoria: 'Libre', formato: 'Grupos + Elim', equipos: 8, equiposCupo: 12},
+                {id: 'torneo_003', nombre: 'Torneo Relámpago Junio', emoji: '⚡', estado: 'programado', categoria: 'Sub-20', formato: 'Elim. Directa', equipos: 4, equiposCupo: 8}
+            ];
+            appData.equipos = [
+                {id: 'eq_001', nombre: 'Atlético San Martín', color: '#1565c0', categoria: 'Primera', delegado: 'Carlos Méndez', estado: 'activo', jugadores: 22},
+                {id: 'eq_002', nombre: 'Deportivo Norte', color: '#2e7d32', categoria: 'Primera', delegado: 'Roberto Paz', estado: 'activo', jugadores: 20},
+                {id: 'eq_003', nombre: 'Club Social Belgrano', color: '#6a1b9a', categoria: 'Primera', delegado: 'Hugo Villalba', estado: 'activo', jugadores: 19},
+                {id: 'eq_004', nombre: 'Racing Tucumán', color: '#c62828', categoria: 'Primera', delegado: 'Martín Juárez', estado: 'activo', jugadores: 21},
+                {id: 'eq_005', nombre: 'San Lorenzo FC', color: '#00838f', categoria: 'Primera', delegado: 'Pablo Sánchez', estado: 'activo', jugadores: 18},
+                {id: 'eq_006', nombre: 'Independiente Sur', color: '#ef6c00', categoria: 'Primera', delegado: 'Diego Acosta', estado: 'suspendido', jugadores: 17},
+                {id: 'eq_007', nombre: 'Boca Juniors FC', color: '#0d47a1', categoria: 'Primera', delegado: 'Fernando López', estado: 'activo', jugadores: 23},
+                {id: 'eq_008', nombre: 'River Plate FC', color: '#b71c1c', categoria: 'Primera', delegado: 'Alejandro Ruiz', estado: 'activo', jugadores: 22}
+            ];
+            appData.jugadores = [
+                {id: 'jug_001', nombre: 'Matías Rodríguez', equipo: 'eq_001', posicion: 'Delantero', edad: 27, pj: 8, goles: 9, amarillas: 2, rojas: 0},
+                {id: 'jug_002', nombre: 'Franco Díaz', equipo: 'eq_004', posicion: 'Delantero', edad: 24, pj: 8, goles: 7, amarillas: 1, rojas: 0},
+                {id: 'jug_003', nombre: 'Nicolás Pereyra', equipo: 'eq_002', posicion: 'Mediocampista', edad: 29, pj: 7, goles: 6, amarillas: 3, rojas: 0},
+                {id: 'jug_004', nombre: 'Agustín Romero', equipo: 'eq_007', posicion: 'Delantero', edad: 22, pj: 8, goles: 5, amarillas: 0, rojas: 0},
+                {id: 'jug_005', nombre: 'Leandro Castro', equipo: 'eq_008', posicion: 'Mediocampista', edad: 26, pj: 8, goles: 4, amarillas: 4, rojas: 0},
+                {id: 'jug_006', nombre: 'Luciano Fernández', equipo: 'eq_006', posicion: 'Defensor', edad: 31, pj: 6, goles: 0, amarillas: 3, rojas: 1}
+            ];
+            appData.partidos = [
+                {id: 'part_001', local: 'eq_001', visitante: 'eq_006', golesLocal: 3, golesVisitante: 1, estado: 'finalizado', fecha: '12/06'},
+                {id: 'part_002', local: 'eq_007', visitante: 'eq_003', golesLocal: 2, golesVisitante: 2, estado: 'finalizado', fecha: '12/06'},
+                {id: 'part_003', local: 'eq_002', visitante: 'eq_005', golesLocal: 2, golesVisitante: 0, estado: 'finalizado', fecha: '12/06'},
+                {id: 'part_004', local: 'eq_004', visitante: 'eq_008', golesLocal: 0, golesVisitante: 0, estado: 'programado', fecha: '14/06'}
+            ];
+            saveData();
+        }
+
+        function saveData() {
+            localStorage.setItem('futgolData', JSON.stringify(appData));
+        }
+
+        function getEquipoNombre(id) {
+            const eq = appData.equipos.find(e => e.id === id);
+            return eq ? eq.nombre : 'Desconocido';
+        }
+
+        function getEquipoColor(id) {
+            const eq = appData.equipos.find(e => e.id === id);
+            return eq ? eq.color : '#999';
+        }
+
+        // ========== RENDER FUNCTIONS ==========
+        function renderTorneosCards() {
+            const container = document.querySelector('#m-torneos .app-content') || document.querySelector('#m-torneos');
+            const cards = container.querySelectorAll('.torneo-card');
+            if (cards.length <= 1) return;
+            
+            const html = appData.torneos.map(t => `
+                <div class="torneo-card">
+                    <div class="torneo-banner bg-${t.estado === 'en-curso' ? '1' : t.estado === 'inscripcion' ? '2' : '3'}">
+                        <div class="torneo-emoji">${t.emoji}</div>
+                        <h3>${t.nombre}</h3>
+                        <div class="torneo-sub">${t.categoria} · ${t.formato}</div>
+                        <div class="torneo-status-pill">${t.estado === 'en-curso' ? '⚡ En curso' : t.estado === 'inscripcion' ? '📝 Inscripción' : '📅 Programado'}</div>
+                    </div>
+                    <div class="torneo-details">
+                        <div class="torneo-stats">
+                            <div><div class="torneo-stat-value">${t.equipos || 0}</div><div class="torneo-stat-label">Equipos</div></div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function crearTorneo() {
+            const nombre = prompt('Nombre del torneo:');
+            if (!nombre) return;
+            
+            const nuevoTorneo = {
+                id: 'torneo_' + Date.now(),
+                nombre: nombre,
+                emoji: '🏆',
+                estado: 'programado',
+                categoria: 'Primera',
+                formato: 'Liga',
+                equipos: 0
+            };
+            appData.torneos.push(nuevoTorneo);
+            saveData();
+            alert('✅ Torneo creado: ' + nombre);
+        }
+
+        function crearEquipo() {
+            const nombre = prompt('Nombre del equipo:');
+            if (!nombre) return;
+            
+            const nuevoEquipo = {
+                id: 'eq_' + Date.now(),
+                nombre: nombre,
+                color: '#00c853',
+                categoria: 'Primera',
+                delegado: 'Por asignar',
+                estado: 'activo',
+                jugadores: 0
+            };
+            appData.equipos.push(nuevoEquipo);
+            saveData();
+            alert('✅ Equipo creado: ' + nombre);
+        }
+
+        function crearJugador() {
+            const nombre = prompt('Nombre del jugador:');
+            if (!nombre) return;
+            
+            const nuevoJugador = {
+                id: 'jug_' + Date.now(),
+                nombre: nombre,
+                equipo: appData.equipos[0]?.id || 'eq_001',
+                posicion: 'Delantero',
+                edad: 25,
+                pj: 0,
+                goles: 0,
+                amarillas: 0,
+                rojas: 0
+            };
+            appData.jugadores.push(nuevoJugador);
+            saveData();
+            alert('✅ Jugador creado: ' + nombre);
+        }
+
+        function crearPartido() {
+            const equipos = appData.equipos;
+            if (equipos.length < 2) { alert('Necesitas al menos 2 equipos'); return; }
+            const local = prompt('ID Local (0-' + (equipos.length-1) + '):', '0');
+            if (!local) return;
+            const idx1 = parseInt(local);
+            if (idx1 < 0 || idx1 >= equipos.length) return;
+            const visitante = prompt('ID Visitante (0-' + (equipos.length-1) + '):', '1');
+            if (!visitante) return;
+            const idx2 = parseInt(visitante);
+            if (idx2 < 0 || idx2 >= equipos.length) return;
+            
+            appData.partidos.push({
+                id: 'part_' + Date.now(),
+                local: equipos[idx1].id,
+                visitante: equipos[idx2].id,
+                golesLocal: 0,
+                golesVisitante: 0,
+                estado: 'programado',
+                fecha: new Date().toLocaleDateString('es-AR')
+            });
+            saveData();
+            alert('✅ Partido creado');
+        }
+
+        function crearCancha() {
+            const nombre = prompt('Nombre de cancha:');
+            if (!nombre) return;
+            appData.canchas.push({
+                id: 'cancha_' + Date.now(),
+                nombre: nombre,
+                ubicacion: prompt('Ubicación:') || '',
+                capacidad: prompt('Capacidad:') || '',
+                telefono: prompt('Teléfono:') || ''
+            });
+            saveData();
+            alert('✅ Cancha creada');
+        }
+
+        function crearArbitro() {
+            const nombre = prompt('Nombre del árbitro:');
+            if (!nombre) return;
+            appData.arbitros.push({
+                id: 'arb_' + Date.now(),
+                nombre: nombre,
+                licencia: prompt('Licencia:') || '',
+                categoria: 'General',
+                partidos: 0
+            });
+            saveData();
+            alert('✅ Árbitro creado');
+        }
+
+        function registrarTarjeta() {
+            if (appData.jugadores.length === 0) { alert('Necesitas jugadores'); return; }
+            const jugs = appData.jugadores.map((j, i) => `${i}: ${j.nombre}`).join(', ');
+            const jug = prompt('Selecciona jugador (0-' + (appData.jugadores.length-1) + '):\n' + jugs, '0');
+            if (!jug) return;
+            const idx = parseInt(jug);
+            if (idx < 0 || idx >= appData.jugadores.length) return;
+            const tipo = prompt('Tipo (amarilla/roja):', 'amarilla');
+            
+            appData.disciplinas.push({
+                id: 'disc_' + Date.now(),
+                jugador: appData.jugadores[idx].id,
+                tipo: tipo,
+                fecha: new Date().toLocaleDateString('es-AR')
+            });
+            saveData();
+            alert('✅ Tarjeta registrada');
+        }
+
+        function registrarPago() {
+            const concepto = prompt('Concepto:');
+            if (!concepto) return;
+            const monto = prompt('Monto ($):');
+            if (!monto) return;
+            const tipo = prompt('Tipo (ingreso/egreso):', 'ingreso');
+            
+            appData.pagos.push({
+                id: 'pago_' + Date.now(),
+                concepto: concepto,
+                entidad: prompt('Entidad:') || '',
+                monto: parseInt(monto) || 0,
+                tipo: tipo,
+                fecha: new Date().toLocaleDateString('es-AR')
+            });
+            saveData();
+            alert('✅ Pago registrado');
+        }
+
+        function verEstadisticas() {
+            const msg = `📊 Estadísticas:\n\nTorneos: ${appData.torneos.length}\nEquipos: ${appData.equipos.length}\nJugadores: ${appData.jugadores.length}\nPartidos: ${appData.partidos.length}\nCanchas: ${appData.canchas.length}\nÁrbitros: ${appData.arbitros.length}`;
+            alert(msg);
+        }
+
+        // ========== SUB-TABS ==========
+        function showSubTab(el, tabId) {
+            document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            document.querySelectorAll('.subtab').forEach(s => s.style.display = 'none');
+            const subtab = document.getElementById(tabId);
+            if (subtab) subtab.style.display = 'block';
+        }
+
+        // ========== INITIALIZATION ==========
+        document.addEventListener('DOMContentLoaded', () => {
+            // Cargar datos primero
+            loadData();
+
+            // QUICK ACTIONS - Asignar listeners
+            const quickActions = document.querySelectorAll('.quick-action');
+            if (quickActions.length >= 4) {
+                quickActions[0].addEventListener('click', crearTorneo);
+                quickActions[1].addEventListener('click', crearEquipo);
+                quickActions[2].addEventListener('click', crearPartido);
+                quickActions[3].addEventListener('click', crearJugador);
+            }
+
+            // NAVIGATION - Asignar listeners
+            const tabs = document.querySelectorAll('.nav-tab');
+            const appPages = document.querySelectorAll('.app-page');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+
+                    const pageId = tab.getAttribute('data-page');
+                    appPages.forEach(p => p.classList.remove('active'));
+                    const page = document.getElementById(pageId);
+                    if (page) {
+                        page.classList.add('active');
+                        document.querySelector('.app-content').scrollTop = 0;
+                    }
+                });
+            });
+
+            // Activar primer tab
+            if (tabs[0]) tabs[0].classList.add('active');
+
+            // DATE PILLS - Asignar listeners
+            document.querySelectorAll('.date-pill').forEach(pill => {
+                pill.addEventListener('click', function() {
+                    document.querySelectorAll('.date-pill').forEach(p => p.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        });
+</script>
+
+</body>
+</html>

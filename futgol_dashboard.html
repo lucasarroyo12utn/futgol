@@ -1,0 +1,2735 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FutGol - Sistema de Gestión de Campeonatos</title>
+    <style>
+        :root {
+            --sidebar-bg: #1a1a2e;
+            --sidebar-hover: #16213e;
+            --sidebar-active: #0f3460;
+            --accent: #00c853;
+            --accent-dark: #00a844;
+            --accent-light: #e8f5e9;
+            --bg-main: #f0f2f5;
+            --bg-card: #ffffff;
+            --text-primary: #1a1a2e;
+            --text-secondary: #6c757d;
+            --text-light: #adb5bd;
+            --border: #e9ecef;
+            --shadow: 0 2px 12px rgba(0,0,0,0.08);
+            --shadow-hover: 0 4px 20px rgba(0,0,0,0.12);
+            --radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-primary);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ========== SIDEBAR ========== */
+        .sidebar {
+            width: 260px;
+            background: var(--sidebar-bg);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            z-index: 100;
+            transition: var(--transition);
+            overflow-y: auto;
+        }
+
+        .sidebar-logo {
+            padding: 24px 20px;
+            font-size: 24px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            letter-spacing: -0.5px;
+        }
+
+        .sidebar-logo span {
+            color: var(--accent);
+        }
+
+        .sidebar-nav {
+            padding: 12px 0;
+            flex: 1;
+        }
+
+        .sidebar-section {
+            padding: 8px 20px 4px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: rgba(255,255,255,0.3);
+            margin-top: 8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 14px;
+            color: rgba(255,255,255,0.65);
+            border-left: 3px solid transparent;
+            text-decoration: none;
+        }
+
+        .nav-item:hover {
+            background: var(--sidebar-hover);
+            color: #fff;
+        }
+
+        .nav-item.active {
+            background: var(--sidebar-active);
+            color: #fff;
+            border-left-color: var(--accent);
+        }
+
+        .nav-item .icon {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
+            padding: 16px 20px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            font-size: 12px;
+            color: rgba(255,255,255,0.3);
+            text-align: center;
+        }
+
+        /* ========== MAIN CONTENT ========== */
+        .main-wrapper {
+            margin-left: 260px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* ========== HEADER ========== */
+        .header {
+            background: var(--bg-card);
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-left h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 10px 16px 10px 40px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            width: 320px;
+            transition: var(--transition);
+            outline: none;
+            background: var(--bg-main);
+        }
+
+        .search-box input:focus {
+            border-color: var(--accent);
+            background: #fff;
+        }
+
+        .search-box::before {
+            content: '🔍';
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .notif-btn {
+            position: relative;
+            background: none;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 10px;
+            transition: var(--transition);
+        }
+
+        .notif-btn:hover {
+            background: var(--bg-main);
+        }
+
+        .notif-badge {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 8px;
+            height: 8px;
+            background: #ff5252;
+            border-radius: 50%;
+        }
+
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 10px;
+            transition: var(--transition);
+        }
+
+        .user-area:hover {
+            background: var(--bg-main);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), #00897b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-role {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        /* ========== CONTENT AREA ========== */
+        .content {
+            padding: 28px 32px;
+            flex: 1;
+        }
+
+        .page { display: none; }
+        .page.active { display: block; }
+
+        /* ========== STAT CARDS ========== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent);
+            border-radius: 0 4px 4px 0;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .stat-card .stat-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .stat-card .stat-value {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--text-primary);
+            line-height: 1;
+        }
+
+        .stat-card .stat-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .stat-card .stat-change {
+            font-size: 12px;
+            color: var(--accent);
+            margin-top: 8px;
+            font-weight: 600;
+        }
+
+        /* ========== GRID SECTIONS ========== */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 28px;
+        }
+
+        .grid-3-1 {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 28px;
+        }
+
+        /* ========== CARDS ========== */
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .card-header {
+            padding: 18px 24px;
+            font-weight: 700;
+            font-size: 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-header .badge {
+            background: var(--accent-light);
+            color: var(--accent-dark);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .card-body {
+            padding: 20px 24px;
+        }
+
+        /* ========== TABLES ========== */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table thead th {
+            background: var(--bg-main);
+            padding: 12px 14px;
+            text-align: left;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        table tbody td {
+            padding: 12px 14px;
+            font-size: 14px;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .team-name {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .team-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .pos-1 { color: var(--accent); font-weight: 800; }
+        .pos-2 { color: #2196f3; font-weight: 700; }
+        .pos-3 { color: #ff9800; font-weight: 700; }
+
+        .vs-badge {
+            background: var(--sidebar-bg);
+            color: #fff;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        /* ========== STATUS BADGES ========== */
+        .status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-active { background: #e8f5e9; color: #2e7d32; }
+        .status-pending { background: #fff3e0; color: #ef6c00; }
+        .status-inactive { background: #fce4ec; color: #c62828; }
+        .status-draft { background: #e3f2fd; color: #1565c0; }
+
+        /* ========== GOLEADORES LIST ========== */
+        .scorer-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            gap: 14px;
+        }
+
+        .scorer-item:last-child { border-bottom: none; }
+
+        .scorer-rank {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 13px;
+        }
+
+        .rank-1 { background: #fff9c4; color: #f9a825; }
+        .rank-2 { background: #eceff1; color: #546e7a; }
+        .rank-3 { background: #ffe0b2; color: #ef6c00; }
+        .rank-other { background: var(--bg-main); color: var(--text-secondary); }
+
+        .scorer-info { flex: 1; }
+        .scorer-name { font-weight: 600; font-size: 14px; }
+        .scorer-team { font-size: 12px; color: var(--text-secondary); }
+
+        .scorer-goals {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        /* ========== TIMELINE ========== */
+        .timeline-item {
+            display: flex;
+            gap: 14px;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .timeline-item:last-child { border-bottom: none; }
+
+        .timeline-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent);
+            margin-top: 5px;
+            flex-shrink: 0;
+        }
+
+        .timeline-content {
+            flex: 1;
+        }
+
+        .timeline-text {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .timeline-time {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 2px;
+        }
+
+        /* ========== TORNEOS CARDS ========== */
+        .torneos-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .torneo-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .torneo-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .torneo-banner {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            position: relative;
+        }
+
+        .torneo-banner-1 { background: linear-gradient(135deg, #1a1a2e, #0f3460); }
+        .torneo-banner-2 { background: linear-gradient(135deg, #00c853, #00897b); }
+        .torneo-banner-3 { background: linear-gradient(135deg, #ff9800, #f44336); }
+
+        .torneo-content {
+            padding: 20px;
+        }
+
+        .torneo-content h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .torneo-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 12px;
+        }
+
+        .torneo-meta-item {
+            font-size: 13px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* ========== PAGE HEADERS ========== */
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .page-header h1 {
+            font-size: 26px;
+            font-weight: 800;
+        }
+
+        .page-header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-top: 2px;
+        }
+
+        /* ========== BUTTONS ========== */
+        .btn {
+            padding: 10px 22px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--border);
+            color: var(--text-primary);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* ========== FILTER BAR ========== */
+        .filter-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-bar select, .filter-bar input {
+            padding: 9px 14px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+            transition: var(--transition);
+            background: #fff;
+        }
+
+        .filter-bar select:focus, .filter-bar input:focus {
+            border-color: var(--accent);
+        }
+
+        /* ========== MODAL ========== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: #fff;
+            border-radius: var(--radius);
+            width: 520px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            animation: modalIn 0.3s ease;
+        }
+
+        @keyframes modalIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-header h3 {
+            font-size: 20px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            padding: 4px;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            background: var(--bg-main);
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--text-secondary);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+            transition: var(--transition);
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--accent);
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        /* ========== FAB ========== */
+        .fab {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0,200,83,0.4);
+            transition: var(--transition);
+            z-index: 80;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fab:hover {
+            transform: scale(1.1) rotate(90deg);
+            background: var(--accent-dark);
+        }
+
+        /* ========== ANIMATIONS ========== */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page.active {
+            animation: fadeIn 0.4s ease;
+        }
+
+        /* ========== SCROLLBAR ========== */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #aaa; }
+
+        .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); }
+    </style>
+</head>
+<body>
+
+    <!-- ========== SIDEBAR ========== -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">⚽ <span>Fut</span>Gol</div>
+        <nav class="sidebar-nav">
+            <div class="sidebar-section">Principal</div>
+            <div class="nav-item active" data-page="dashboard">
+                <span class="icon">🏠</span> Dashboard
+            </div>
+            <div class="sidebar-section">Competencia</div>
+            <div class="nav-item" data-page="torneos">
+                <span class="icon">🏆</span> Torneos
+            </div>
+            <div class="nav-item" data-page="equipos">
+                <span class="icon">👥</span> Equipos
+            </div>
+            <div class="nav-item" data-page="jugadores">
+                <span class="icon">🧑</span> Jugadores
+            </div>
+            <div class="nav-item" data-page="fixture">
+                <span class="icon">📅</span> Fixture
+            </div>
+            <div class="nav-item" data-page="partidos">
+                <span class="icon">⚽</span> Partidos
+            </div>
+            <div class="sidebar-section">Estadísticas</div>
+            <div class="nav-item" data-page="posiciones">
+                <span class="icon">📊</span> Posiciones
+            </div>
+            <div class="nav-item" data-page="goleadores">
+                <span class="icon">🥇</span> Goleadores
+            </div>
+            <div class="nav-item" data-page="disciplina">
+                <span class="icon">🟨</span> Disciplina
+            </div>
+            <div class="sidebar-section">Gestión</div>
+            <div class="nav-item" data-page="canchas">
+                <span class="icon">🏟️</span> Canchas
+            </div>
+            <div class="nav-item" data-page="arbitros">
+                <span class="icon">👨‍⚖️</span> Árbitros
+            </div>
+            <div class="nav-item" data-page="pagos">
+                <span class="icon">💰</span> Pagos
+            </div>
+            <div class="sidebar-section">Sistema</div>
+            <div class="nav-item" data-page="config">
+                <span class="icon">⚙️</span> Configuración
+            </div>
+        </nav>
+        <div class="sidebar-footer">FutGol v1.0 &bull; 2026</div>
+    </aside>
+
+    <!-- ========== MAIN WRAPPER ========== -->
+    <div class="main-wrapper">
+
+        <!-- ========== HEADER ========== -->
+        <header class="header">
+            <div class="header-left">
+                <div class="search-box">
+                    <input type="text" placeholder="Buscar equipos, jugadores, partidos...">
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="notif-btn">
+                    🔔
+                    <span class="notif-badge"></span>
+                </button>
+                <div class="user-area">
+                    <div class="user-avatar">LA</div>
+                    <div class="user-info">
+                        <span class="user-name">Lucas Arroyo</span>
+                        <span class="user-role">Administrador</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- ========== CONTENT ========== -->
+        <main class="content">
+
+            <!-- ===== PAGE: DASHBOARD ===== -->
+            <section class="page active" id="page-dashboard">
+                <div class="page-header">
+                    <div>
+                        <h1>Dashboard</h1>
+                        <p>Resumen general de tus campeonatos</p>
+                    </div>
+                    <div style="font-size:14px; color:var(--text-secondary);">📅 Junio 2026</div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">🏆</div>
+                        <div class="stat-value">3</div>
+                        <div class="stat-label">Torneos Activos</div>
+                        <div class="stat-change">↑ 1 nuevo este mes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-value">24</div>
+                        <div class="stat-label">Equipos Inscriptos</div>
+                        <div class="stat-change">↑ 4 esta semana</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🧑</div>
+                        <div class="stat-value">384</div>
+                        <div class="stat-label">Jugadores Registrados</div>
+                        <div class="stat-change">↑ 32 nuevos</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⚽</div>
+                        <div class="stat-value">47</div>
+                        <div class="stat-label">Partidos Jugados</div>
+                        <div class="stat-change">↑ 6 esta semana</div>
+                    </div>
+                </div>
+
+                <!-- Próximos Partidos + Actividad -->
+                <div class="grid-3-1">
+                    <div class="card">
+                        <div class="card-header">
+                            📅 Próximos Partidos
+                            <span class="badge">Esta semana</span>
+                        </div>
+                        <div class="card-body" style="padding:0;">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Local</th>
+                                        <th></th>
+                                        <th>Visitante</th>
+                                        <th>Cancha</th>
+                                        <th>Hora</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>14/06</td>
+                                        <td><span class="team-name"><span class="team-dot" style="background:#1565c0"></span>Atlético San Martín</span></td>
+                                        <td><span class="vs-badge">VS</span></td>
+                                        <td><span class="team-name"><span class="team-dot" style="background:#c62828"></span>Racing Tucumán</span></td>
+                                        <td>Cancha N°1</td>
+                                        <td>15:00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>14/06</td>
+                                        <td><span class="team-name"><span class="team-dot" style="background:#2e7d32"></span>Deportivo Norte</span></td>
+                                        <td><span class="vs-badge">VS</span></td>
+                                        <td><span class="team-name"><span class="team-dot" style="background:#ef6c00"></span>Independiente Sur</span></td>
+                                        <td>Cancha N°2</td>
+                                        <td>17:00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>15/06</td>
+                                        <td><span class="team-name"><span class="team-dot" style="background:#6a1b9a"></span>Club Social Belgrano</span></td>
+                                        <td><span class="vs-badge">VS</span></td>
+                                        <td><span class="team-name"><span class="team-dot" style="background:#00838f"></span>San Lorenzo FC</span></td>
+                                        <td>Cancha N°1</td>
+                                        <td>10:00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>15/06</td>
+                                        <td><span class="team-name"><span class="team-dot" style="background:#0d47a1"></span>Boca Juniors FC</span></td>
+                                        <td><span class="vs-badge">VS</span></td>
+                                        <td><span class="team-name"><span class="team-dot" style="background:#b71c1c"></span>River Plate FC</span></td>
+                                        <td>Cancha N°3</td>
+                                        <td>16:00</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">🕐 Actividad Reciente</div>
+                        <div class="card-body">
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <div class="timeline-content">
+                                    <div class="timeline-text"><b>Atlético San Martín</b> 3 - 1 <b>Independiente Sur</b></div>
+                                    <div class="timeline-time">Hace 2 horas</div>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot" style="background:#ff9800"></div>
+                                <div class="timeline-content">
+                                    <div class="timeline-text">🟨 Tarjeta amarilla para <b>M. González</b></div>
+                                    <div class="timeline-time">Hace 3 horas</div>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot" style="background:#2196f3"></div>
+                                <div class="timeline-content">
+                                    <div class="timeline-text">Nuevo equipo inscripto: <b>Def. de Córdoba</b></div>
+                                    <div class="timeline-time">Hace 5 horas</div>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot" style="background:#f44336"></div>
+                                <div class="timeline-content">
+                                    <div class="timeline-text">🟥 Roja directa: <b>L. Fernández</b> (2 fechas)</div>
+                                    <div class="timeline-time">Ayer 18:30</div>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot" style="background:#9c27b0"></div>
+                                <div class="timeline-content">
+                                    <div class="timeline-text">Se generó el fixture de <b>Copa Ciudad 2026</b></div>
+                                    <div class="timeline-time">Ayer 14:00</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabla Posiciones + Goleadores -->
+                <div class="grid-3-1">
+                    <div class="card">
+                        <div class="card-header">
+                            📊 Tabla de Posiciones — Liga Apertura 2026
+                            <span class="badge">Fecha 8</span>
+                        </div>
+                        <div class="card-body" style="padding:0;">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Pos</th>
+                                        <th>Equipo</th>
+                                        <th>PJ</th>
+                                        <th>PG</th>
+                                        <th>PE</th>
+                                        <th>PP</th>
+                                        <th>GF</th>
+                                        <th>GC</th>
+                                        <th>DG</th>
+                                        <th>PTS</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="pos-1">1</td>
+                                        <td><span class="team-name"><span class="team-dot" style="background:#1565c0"></span>Atlético San Martín</span></td>
+                                        <td>8</td><td>6</td><td>1</td><td>1</td><td>18</td><td>7</td><td style="color:var(--accent);font-weight:700">+11</td><td style="font-weight:800;font-size:16px">19</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="pos-2">2</td>
+                                        <td><span class="team-name"><span class="team-dot" style="background:#2e7d32"></span>Deportivo Norte</span></td>
+                                        <td>8</td><td>5</td><td>2</td><td>1</td><td>16</td><td>8</td><td style="color:var(--accent);font-weight:700">+8</td><td style="font-weight:800;font-size:16px">17</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="pos-3">3</td>
+                                        <td><span class="team-name"><span class="team-dot" style="background:#c62828"></span>Racing Tucumán</span></td>
+                                        <td>8</td><td>5</td><td>1</td><td>2</td><td>14</td><td>9</td><td style="color:var(--accent);font-weight:700">+5</td><td style="font-weight:800;font-size:16px">16</td>
+                                    </tr>
+                                    <tr>
+                                        <td>4</td>
+                                        <td><span class="team-name"><span class="team-dot" style="background:#0d47a1"></span>Boca Juniors FC</span></td>
+                                        <td>8</td><td>4</td><td>2</td><td>2</td><td>13</td><td>10</td><td style="color:var(--accent);font-weight:700">+3</td><td style="font-weight:800;font-size:16px">14</td>
+                                    </tr>
+                                    <tr>
+                                        <td>5</td>
+                                        <td><span class="team-name"><span class="team-dot" style="background:#b71c1c"></span>River Plate FC</span></td>
+                                        <td>8</td><td>3</td><td>3</td><td>2</td><td>12</td><td>10</td><td style="color:var(--accent);font-weight:700">+2</td><td style="font-weight:800;font-size:16px">12</td>
+                                    </tr>
+                                    <tr>
+                                        <td>6</td>
+                                        <td><span class="team-name"><span class="team-dot" style="background:#6a1b9a"></span>Club Social Belgrano</span></td>
+                                        <td>8</td><td>2</td><td>3</td><td>3</td><td>10</td><td>11</td><td style="color:#f44336;font-weight:700">-1</td><td style="font-weight:800;font-size:16px">9</td>
+                                    </tr>
+                                    <tr>
+                                        <td>7</td>
+                                        <td><span class="team-name"><span class="team-dot" style="background:#00838f"></span>San Lorenzo FC</span></td>
+                                        <td>8</td><td>1</td><td>2</td><td>5</td><td>6</td><td>14</td><td style="color:#f44336;font-weight:700">-8</td><td style="font-weight:800;font-size:16px">5</td>
+                                    </tr>
+                                    <tr>
+                                        <td>8</td>
+                                        <td><span class="team-name"><span class="team-dot" style="background:#ef6c00"></span>Independiente Sur</span></td>
+                                        <td>8</td><td>0</td><td>2</td><td>6</td><td>5</td><td>19</td><td style="color:#f44336;font-weight:700">-14</td><td style="font-weight:800;font-size:16px">2</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            🥇 Top Goleadores
+                            <span class="badge">Liga Apertura</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="scorer-item">
+                                <div class="scorer-rank rank-1">1</div>
+                                <div class="scorer-info">
+                                    <div class="scorer-name">Matías Rodríguez</div>
+                                    <div class="scorer-team">Atlético San Martín</div>
+                                </div>
+                                <div class="scorer-goals">9</div>
+                            </div>
+                            <div class="scorer-item">
+                                <div class="scorer-rank rank-2">2</div>
+                                <div class="scorer-info">
+                                    <div class="scorer-name">Franco Díaz</div>
+                                    <div class="scorer-team">Racing Tucumán</div>
+                                </div>
+                                <div class="scorer-goals">7</div>
+                            </div>
+                            <div class="scorer-item">
+                                <div class="scorer-rank rank-3">3</div>
+                                <div class="scorer-info">
+                                    <div class="scorer-name">Nicolás Pereyra</div>
+                                    <div class="scorer-team">Deportivo Norte</div>
+                                </div>
+                                <div class="scorer-goals">6</div>
+                            </div>
+                            <div class="scorer-item">
+                                <div class="scorer-rank rank-other">4</div>
+                                <div class="scorer-info">
+                                    <div class="scorer-name">Agustín Romero</div>
+                                    <div class="scorer-team">Boca Juniors FC</div>
+                                </div>
+                                <div class="scorer-goals">5</div>
+                            </div>
+                            <div class="scorer-item">
+                                <div class="scorer-rank rank-other">5</div>
+                                <div class="scorer-info">
+                                    <div class="scorer-name">Leandro Castro</div>
+                                    <div class="scorer-team">River Plate FC</div>
+                                </div>
+                                <div class="scorer-goals">4</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== PAGE: TORNEOS ===== -->
+            <section class="page" id="page-torneos">
+                <div class="page-header">
+                    <div>
+                        <h1>🏆 Gestión de Torneos</h1>
+                        <p>Administra tus campeonatos y competencias</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openModal('torneo')">+ Nuevo Torneo</button>
+                </div>
+
+                <div class="torneos-grid">
+                    <div class="torneo-card">
+                        <div class="torneo-banner torneo-banner-1">🏆</div>
+                        <div class="torneo-content">
+                            <div style="display:flex;justify-content:space-between;align-items:center">
+                                <h3>Liga Apertura 2026</h3>
+                                <span class="status status-active">En curso</span>
+                            </div>
+                            <div class="torneo-meta">
+                                <div class="torneo-meta-item">📅 01/03/2026 — 30/06/2026</div>
+                                <div class="torneo-meta-item">👥 8 equipos &bull; Categoría Primera</div>
+                                <div class="torneo-meta-item">📊 Formato: Liga (todos contra todos)</div>
+                                <div class="torneo-meta-item">⚽ Fecha actual: 8 de 14</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="torneo-card">
+                        <div class="torneo-banner torneo-banner-2">🏅</div>
+                        <div class="torneo-content">
+                            <div style="display:flex;justify-content:space-between;align-items:center">
+                                <h3>Copa Ciudad 2026</h3>
+                                <span class="status status-pending">Inscripción</span>
+                            </div>
+                            <div class="torneo-meta">
+                                <div class="torneo-meta-item">📅 15/07/2026 — 30/08/2026</div>
+                                <div class="torneo-meta-item">👥 12 equipos &bull; Categoría Libre</div>
+                                <div class="torneo-meta-item">📊 Formato: Grupos + Eliminación</div>
+                                <div class="torneo-meta-item">📝 8 de 12 inscriptos</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="torneo-card">
+                        <div class="torneo-banner torneo-banner-3">⚡</div>
+                        <div class="torneo-content">
+                            <div style="display:flex;justify-content:space-between;align-items:center">
+                                <h3>Torneo Relámpago Junio</h3>
+                                <span class="status status-draft">Programado</span>
+                            </div>
+                            <div class="torneo-meta">
+                                <div class="torneo-meta-item">📅 28/06/2026 (un día)</div>
+                                <div class="torneo-meta-item">👥 8 equipos &bull; Categoría Sub-20</div>
+                                <div class="torneo-meta-item">📊 Formato: Eliminación directa</div>
+                                <div class="torneo-meta-item">📝 4 de 8 inscriptos</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== PAGE: EQUIPOS ===== -->
+            <section class="page" id="page-equipos">
+                <div class="page-header">
+                    <div>
+                        <h1>👥 Gestión de Equipos</h1>
+                        <p>Administra los equipos y sus planteles</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openModal('equipo')">+ Nuevo Equipo</button>
+                </div>
+
+                <div class="filter-bar">
+                    <select>
+                        <option>Todos los torneos</option>
+                        <option>Liga Apertura 2026</option>
+                        <option>Copa Ciudad 2026</option>
+                    </select>
+                    <select>
+                        <option>Todas las categorías</option>
+                        <option>Primera</option>
+                        <option>Sub-20</option>
+                        <option>Libre</option>
+                    </select>
+                    <select>
+                        <option>Todos los estados</option>
+                        <option>Activo</option>
+                        <option>Suspendido</option>
+                    </select>
+                </div>
+
+                <div class="card">
+                    <div class="card-body" style="padding:0;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th></th>
+                                    <th>Equipo</th>
+                                    <th>Categoría</th>
+                                    <th>Jugadores</th>
+                                    <th>Delegado</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td><span class="team-dot" style="background:#1565c0"></span></td>
+                                    <td><b>Atlético San Martín</b></td>
+                                    <td>Primera</td>
+                                    <td>22</td>
+                                    <td>Carlos Méndez</td>
+                                    <td><span class="status status-active">Activo</span></td>
+                                    <td><button class="btn btn-outline" style="padding:6px 12px;font-size:12px">✏️ Editar</button></td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td><span class="team-dot" style="background:#2e7d32"></span></td>
+                                    <td><b>Deportivo Norte</b></td>
+                                    <td>Primera</td>
+                                    <td>20</td>
+                                    <td>Roberto Paz</td>
+                                    <td><span class="status status-active">Activo</span></td>
+                                    <td><button class="btn btn-outline" style="padding:6px 12px;font-size:12px">✏️ Editar</button></td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td><span class="team-dot" style="background:#6a1b9a"></span></td>
+                                    <td><b>Club Social Belgrano</b></td>
+                                    <td>Primera</td>
+                                    <td>19</td>
+                                    <td>Hugo Villalba</td>
+                                    <td><span class="status status-active">Activo</span></td>
+                                    <td><button class="btn btn-outline" style="padding:6px 12px;font-size:12px">✏️ Editar</button></td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td><span class="team-dot" style="background:#c62828"></span></td>
+                                    <td><b>Racing Tucumán</b></td>
+                                    <td>Primera</td>
+                                    <td>21</td>
+                                    <td>Martín Juárez</td>
+                                    <td><span class="status status-active">Activo</span></td>
+                                    <td><button class="btn btn-outline" style="padding:6px 12px;font-size:12px">✏️ Editar</button></td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td><span class="team-dot" style="background:#00838f"></span></td>
+                                    <td><b>San Lorenzo FC</b></td>
+                                    <td>Primera</td>
+                                    <td>18</td>
+                                    <td>Pablo Sánchez</td>
+                                    <td><span class="status status-active">Activo</span></td>
+                                    <td><button class="btn btn-outline" style="padding:6px 12px;font-size:12px">✏️ Editar</button></td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td><span class="team-dot" style="background:#ef6c00"></span></td>
+                                    <td><b>Independiente Sur</b></td>
+                                    <td>Primera</td>
+                                    <td>17</td>
+                                    <td>Diego Acosta</td>
+                                    <td><span class="status status-inactive">Suspendido</span></td>
+                                    <td><button class="btn btn-outline" style="padding:6px 12px;font-size:12px">✏️ Editar</button></td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td><span class="team-dot" style="background:#0d47a1"></span></td>
+                                    <td><b>Boca Juniors FC</b></td>
+                                    <td>Primera</td>
+                                    <td>23</td>
+                                    <td>Fernando López</td>
+                                    <td><span class="status status-active">Activo</span></td>
+                                    <td><button class="btn btn-outline" style="padding:6px 12px;font-size:12px">✏️ Editar</button></td>
+                                </tr>
+                                <tr>
+                                    <td>8</td>
+                                    <td><span class="team-dot" style="background:#b71c1c"></span></td>
+                                    <td><b>River Plate FC</b></td>
+                                    <td>Primera</td>
+                                    <td>22</td>
+                                    <td>Alejandro Ruiz</td>
+                                    <td><span class="status status-active">Activo</span></td>
+                                    <td><button class="btn btn-outline" style="padding:6px 12px;font-size:12px">✏️ Editar</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== PAGE: JUGADORES ===== -->
+            <section class="page" id="page-jugadores">
+                <div class="page-header">
+                    <div>
+                        <h1>🧑 Gestión de Jugadores</h1>
+                        <p>Registro y control de jugadores</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openModal('jugador')">+ Nuevo Jugador</button>
+                </div>
+
+                <div class="filter-bar">
+                    <input type="text" placeholder="🔍 Buscar jugador..." style="width:240px">
+                    <select>
+                        <option>Todos los equipos</option>
+                        <option>Atlético San Martín</option>
+                        <option>Deportivo Norte</option>
+                        <option>Club Social Belgrano</option>
+                        <option>Racing Tucumán</option>
+                        <option>San Lorenzo FC</option>
+                        <option>Independiente Sur</option>
+                        <option>Boca Juniors FC</option>
+                        <option>River Plate FC</option>
+                    </select>
+                    <select>
+                        <option>Todas las posiciones</option>
+                        <option>Arquero</option>
+                        <option>Defensor</option>
+                        <option>Mediocampista</option>
+                        <option>Delantero</option>
+                    </select>
+                </div>
+
+                <div class="card">
+                    <div class="card-body" style="padding:0;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Jugador</th>
+                                    <th>Equipo</th>
+                                    <th>Posición</th>
+                                    <th>Edad</th>
+                                    <th>PJ</th>
+                                    <th>Goles</th>
+                                    <th>🟨</th>
+                                    <th>🟥</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td><b>Matías Rodríguez</b></td>
+                                    <td><span class="team-name"><span class="team-dot" style="background:#1565c0"></span>Atlético San Martín</span></td>
+                                    <td>Delantero</td>
+                                    <td>27</td>
+                                    <td>8</td>
+                                    <td style="font-weight:700;color:var(--accent)">9</td>
+                                    <td>2</td>
+                                    <td>0</td>
+                                    <td><span class="status status-active">Habilitado</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td><b>Franco Díaz</b></td>
+                                    <td><span class="team-name"><span class="team-dot" style="background:#c62828"></span>Racing Tucumán</span></td>
+                                    <td>Delantero</td>
+                                    <td>24</td>
+                                    <td>8</td>
+                                    <td style="font-weight:700;color:var(--accent)">7</td>
+                                    <td>1</td>
+                                    <td>0</td>
+                                    <td><span class="status status-active">Habilitado</span></td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td><b>Nicolás Pereyra</b></td>
+                                    <td><span class="team-name"><span class="team-dot" style="background:#2e7d32"></span>Deportivo Norte</span></td>
+                                    <td>Mediocampista</td>
+                                    <td>29</td>
+                                    <td>7</td>
+                                    <td style="font-weight:700;color:var(--accent)">6</td>
+                                    <td>3</td>
+                                    <td>0</td>
+                                    <td><span class="status status-active">Habilitado</span></td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td><b>Agustín Romero</b></td>
+                                    <td><span class="team-name"><span class="team-dot" style="background:#0d47a1"></span>Boca Juniors FC</span></td>
+                                    <td>Delantero</td>
+                                    <td>22</td>
+                                    <td>8</td>
+                                    <td style="font-weight:700;color:var(--accent)">5</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td><span class="status status-active">Habilitado</span></td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td><b>Leandro Castro</b></td>
+                                    <td><span class="team-name"><span class="team-dot" style="background:#b71c1c"></span>River Plate FC</span></td>
+                                    <td>Mediocampista</td>
+                                    <td>26</td>
+                                    <td>8</td>
+                                    <td style="font-weight:700;color:var(--accent)">4</td>
+                                    <td>4</td>
+                                    <td>0</td>
+                                    <td><span class="status status-pending">⚠️ 4ta amarilla</span></td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td><b>Luciano Fernández</b></td>
+                                    <td><span class="team-name"><span class="team-dot" style="background:#ef6c00"></span>Independiente Sur</span></td>
+                                    <td>Defensor</td>
+                                    <td>31</td>
+                                    <td>6</td>
+                                    <td>0</td>
+                                    <td>3</td>
+                                    <td>1</td>
+                                    <td><span class="status status-inactive">Suspendido</span></td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td><b>Gonzalo Martínez</b></td>
+                                    <td><span class="team-name"><span class="team-dot" style="background:#6a1b9a"></span>Club Social Belgrano</span></td>
+                                    <td>Arquero</td>
+                                    <td>33</td>
+                                    <td>8</td>
+                                    <td>0</td>
+                                    <td>1</td>
+                                    <td>0</td>
+                                    <td><span class="status status-active">Habilitado</span></td>
+                                </tr>
+                                <tr>
+                                    <td>8</td>
+                                    <td><b>Sebastián Molina</b></td>
+                                    <td><span class="team-name"><span class="team-dot" style="background:#1565c0"></span>Atlético San Martín</span></td>
+                                    <td>Mediocampista</td>
+                                    <td>25</td>
+                                    <td>8</td>
+                                    <td style="font-weight:700;color:var(--accent)">3</td>
+                                    <td>2</td>
+                                    <td>0</td>
+                                    <td><span class="status status-active">Habilitado</span></td>
+                                </tr>
+                                <tr>
+                                    <td>9</td>
+                                    <td><b>Tomás Aguirre</b></td>
+                                    <td><span class="team-name"><span class="team-dot" style="background:#00838f"></span>San Lorenzo FC</span></td>
+                                    <td>Defensor</td>
+                                    <td>28</td>
+                                    <td>7</td>
+                                    <td>1</td>
+                                    <td>5</td>
+                                    <td>0</td>
+                                    <td><span class="status status-inactive">Suspendido</span></td>
+                                </tr>
+                                <tr>
+                                    <td>10</td>
+                                    <td><b>Ramiro Sosa</b></td>
+                                    <td><span class="team-name"><span class="team-dot" style="background:#2e7d32"></span>Deportivo Norte</span></td>
+                                    <td>Delantero</td>
+                                    <td>21</td>
+                                    <td>6</td>
+                                    <td style="font-weight:700;color:var(--accent)">3</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td><span class="status status-active">Habilitado</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== PLACEHOLDER PAGES ===== -->
+            <!-- FIXTURE -->
+            <section class="page" id="page-fixture">
+                <div class="page-header"><div><h1>📅 Fixture</h1><p>Generación automática de partidos</p></div></div>
+                <div class="card">
+                    <div class="card-header" style="display:flex;justify-content:space-between;align-items:center">
+                        <span>Seleccionar Torneo</span>
+                        <button class="btn btn-primary" style="padding:8px 16px" onclick="openModal('fixture')">+ Generar Fixture</button>
+                    </div>
+                    <div class="card-body">
+                        <select id="fixture_torneo" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:6px;margin-bottom:20px" onchange="renderFixture()">
+                            <option value="">-- Seleccionar torneo --</option>
+                            ${appData.torneos.map(t => `<option value="${t.id}">${t.nombre}</option>`).join('')}
+                        </select>
+                        <div id="fixtureContainer" style="display:grid;gap:12px"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PARTIDOS -->
+            <section class="page" id="page-partidos">
+                <div class="page-header"><div><h1>⚽ Partidos</h1><p>Registro de resultados</p></div></div>
+                <div class="card">
+                    <div class="card-header" style="display:flex;justify-content:space-between">
+                        <span>Todos los Partidos</span>
+                        <button class="btn btn-primary" style="padding:8px 16px" onclick="openModal('partido')">+ Nuevo Partido</button>
+                    </div>
+                    <div class="card-body" style="overflow-x:auto">
+                        <table class="table" id="partidosTable">
+                            <thead>
+                                <tr>
+                                    <th style="width:50px">#</th>
+                                    <th>Local</th>
+                                    <th style="width:80px">Goles</th>
+                                    <th style="width:60px">vs</th>
+                                    <th style="width:80px">Goles</th>
+                                    <th>Visitante</th>
+                                    <th>Estado</th>
+                                    <th style="width:120px">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- POSICIONES -->
+            <section class="page" id="page-posiciones">
+                <div class="page-header"><div><h1>📊 Tabla de Posiciones</h1><p>Clasificación por torneo</p></div></div>
+                <div class="card">
+                    <div class="card-body">
+                        <select id="posiciones_torneo" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:6px;margin-bottom:20px" onchange="renderPosiciones()">
+                            <option value="">-- Seleccionar torneo --</option>
+                            ${appData.torneos.map(t => `<option value="${t.id}">${t.nombre}</option>`).join('')}
+                        </select>
+                        <table class="table" id="posicionesTable">
+                            <thead>
+                                <tr>
+                                    <th style="width:50px">Pos</th>
+                                    <th>Equipo</th>
+                                    <th style="width:50px">PJ</th>
+                                    <th style="width:50px">PG</th>
+                                    <th style="width:50px">PE</th>
+                                    <th style="width:50px">PP</th>
+                                    <th style="width:50px">GF</th>
+                                    <th style="width:50px">GC</th>
+                                    <th style="width:50px">DG</th>
+                                    <th style="width:50px">Pts</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- GOLEADORES -->
+            <section class="page" id="page-goleadores">
+                <div class="page-header"><div><h1>🥇 Goleadores</h1><p>Top scorers</p></div></div>
+                <div class="card">
+                    <div class="card-body">
+                        <select id="goleadores_torneo" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:6px;margin-bottom:20px" onchange="renderGoleadores()">
+                            <option value="">-- Todos los torneos --</option>
+                            ${appData.torneos.map(t => `<option value="${t.id}">${t.nombre}</option>`).join('')}
+                        </select>
+                        <div id="goleadoresContainer" style="display:grid;gap:10px"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- DISCIPLINA -->
+            <section class="page" id="page-disciplina">
+                <div class="page-header"><div><h1>🟨 Disciplina</h1><p>Tarjetas y sanciones</p></div></div>
+                <div class="card">
+                    <div class="card-header" style="display:flex;justify-content:space-between">
+                        <span>Registro de Sanciones</span>
+                        <button class="btn btn-primary" style="padding:8px 16px" onclick="openModal('disciplina')">+ Registrar Tarjeta</button>
+                    </div>
+                    <div class="card-body" style="overflow-x:auto">
+                        <table class="table" id="disciplinaTable">
+                            <thead>
+                                <tr>
+                                    <th>Jugador</th>
+                                    <th>Equipo</th>
+                                    <th style="width:80px">Tarjeta</th>
+                                    <th>Partido</th>
+                                    <th style="width:120px">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CANCHAS -->
+            <section class="page" id="page-canchas">
+                <div class="page-header"><div><h1>🏟️ Canchas</h1><p>Gestión de sedes</p></div></div>
+                <div class="card">
+                    <div class="card-header" style="display:flex;justify-content:space-between">
+                        <span>Canchas Disponibles</span>
+                        <button class="btn btn-primary" style="padding:8px 16px" onclick="openModal('cancha')">+ Nueva Cancha</button>
+                    </div>
+                    <div class="card-body">
+                        <div id="anchasContainer" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ÁRBITROS -->
+            <section class="page" id="page-arbitros">
+                <div class="page-header"><div><h1>👨‍⚖️ Árbitros</h1><p>Gestión de árbitros</p></div></div>
+                <div class="card">
+                    <div class="card-header" style="display:flex;justify-content:space-between">
+                        <span>Árbitros Registrados</span>
+                        <button class="btn btn-primary" style="padding:8px 16px" onclick="openModal('arbitro')">+ Nuevo Árbitro</button>
+                    </div>
+                    <div class="card-body" style="overflow-x:auto">
+                        <table class="table" id="arbitrosTable">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Licencia</th>
+                                    <th style="width:80px">Categoría</th>
+                                    <th style="width:80px">Partidos</th>
+                                    <th style="width:120px">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PAGOS -->
+            <section class="page" id="page-pagos">
+                <div class="page-header"><div><h1>💰 Pagos</h1><p>Gestión de cuotas e inscripciones</p></div></div>
+                <div class="card">
+                    <div class="card-header" style="display:flex;justify-content:space-between">
+                        <span>Movimientos Financieros</span>
+                        <button class="btn btn-primary" style="padding:8px 16px" onclick="openModal('pago')">+ Registrar Pago</button>
+                    </div>
+                    <div class="card-body">
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;margin-bottom:20px">
+                            <div style="background:linear-gradient(135deg,#667eea,#764ba2);padding:20px;border-radius:12px;color:white">
+                                <div style="font-size:12px;opacity:0.9">Total Ingresos</div>
+                                <div style="font-size:28px;font-weight:bold" id="totalIngresos">$0</div>
+                            </div>
+                            <div style="background:linear-gradient(135deg,#f093fb,#f5576c);padding:20px;border-radius:12px;color:white">
+                                <div style="font-size:12px;opacity:0.9">Total Egresos</div>
+                                <div style="font-size:28px;font-weight:bold" id="totalEgresos">$0</div>
+                            </div>
+                            <div style="background:linear-gradient(135deg,#4facfe,#00f2fe);padding:20px;border-radius:12px;color:white">
+                                <div style="font-size:12px;opacity:0.9">Saldo</div>
+                                <div style="font-size:28px;font-weight:bold" id="totalSaldo">$0</div>
+                            </div>
+                        </div>
+                        <table class="table" id="pagosTable">
+                            <thead>
+                                <tr>
+                                    <th>Concepto</th>
+                                    <th>Equipo/Jugador</th>
+                                    <th style="width:100px">Monto</th>
+                                    <th style="width:80px">Tipo</th>
+                                    <th>Fecha</th>
+                                    <th style="width:100px">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CONFIGURACIÓN -->
+            <section class="page" id="page-config">
+                <div class="page-header"><div><h1>⚙️ Configuración</h1><p>Ajustes del sistema</p></div></div>
+                <div style="display:grid;gap:20px">
+                    <div class="card">
+                        <div class="card-header">Información del Sistema</div>
+                        <div class="card-body">
+                            <div style="display:grid;gap:12px">
+                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+                                    <div>
+                                        <label style="font-size:12px;color:var(--text-secondary)">Nombre de la Aplicación</label>
+                                        <input type="text" id="config_nombre" value="FutGol Dashboard" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:6px;margin-top:4px">
+                                    </div>
+                                    <div>
+                                        <label style="font-size:12px;color:var(--text-secondary)">Versión</label>
+                                        <input type="text" id="config_version" value="1.0.0" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:6px;margin-top:4px" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">Copias de Seguridad</div>
+                        <div class="card-body" style="display:flex;gap:12px;flex-wrap:wrap">
+                            <button class="btn btn-primary" onclick="descargarBackup()">📥 Descargar Datos</button>
+                            <button class="btn btn-outline" onclick="document.getElementById('uploadBackup').click()">📤 Restaurar Datos</button>
+                            <input type="file" id="uploadBackup" accept=".json" style="display:none" onchange="restaurarBackup(event)">
+                            <button class="btn btn-outline" style="background:#ffebee;color:#c62828" onclick="if(confirm('¿Borrar TODOS los datos?')) { appData={torneos:[],equipos:[],jugadores:[],partidos:[],posiciones:[],canchas:[],arbitros:[],disciplinas:[],pagos:[]};saveData();location.reload() }">🗑️ Limpiar BD</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">Estadísticas</div>
+                        <div class="card-body">
+                            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px">
+                                <div style="text-align:center;padding:20px;background:var(--border);border-radius:8px">
+                                    <div style="font-size:28px;font-weight:bold" id="stats_torneos">0</div>
+                                    <div style="font-size:12px;color:var(--text-secondary)">Torneos</div>
+                                </div>
+                                <div style="text-align:center;padding:20px;background:var(--border);border-radius:8px">
+                                    <div style="font-size:28px;font-weight:bold" id="stats_equipos">0</div>
+                                    <div style="font-size:12px;color:var(--text-secondary)">Equipos</div>
+                                </div>
+                                <div style="text-align:center;padding:20px;background:var(--border);border-radius:8px">
+                                    <div style="font-size:28px;font-weight:bold" id="stats_jugadores">0</div>
+                                    <div style="font-size:12px;color:var(--text-secondary)">Jugadores</div>
+                                </div>
+                                <div style="text-align:center;padding:20px;background:var(--border);border-radius:8px">
+                                    <div style="font-size:28px;font-weight:bold" id="stats_partidos">0</div>
+                                    <div style="font-size:12px;color:var(--text-secondary)">Partidos</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ========== FAB BUTTON ========== -->
+    <button class="fab" onclick="openModal('general')" title="Acción rápida">+</button>
+
+    <!-- ========== MODAL ========== -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3 id="modalTitle">Nuevo Registro</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Dynamic content -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal()">Cancelar</button>
+                <button class="btn btn-primary" onclick="guardarRegistro(); closeModal();">💾 Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== DATA MANAGEMENT ==========
+        const appData = {
+            torneos: [],
+            equipos: [],
+            jugadores: [],
+            partidos: [],
+            posiciones: [],
+            canchas: [],
+            arbitros: [],
+            disciplinas: [],
+            pagos: []
+        };
+
+        function loadData() {
+            const stored = localStorage.getItem('futgolData');
+            if (stored) {
+                try {
+                    const data = JSON.parse(stored);
+                    Object.assign(appData, data);
+                } catch (e) {
+                    initializeDefaultData();
+                }
+            } else {
+                initializeDefaultData();
+            }
+        }
+
+        function initializeDefaultData() {
+            appData.torneos = [
+                {id: 'torneo_001', nombre: 'Liga Apertura 2026', emoji: '🏆', estado: 'en-curso', categoria: 'Primera', formato: 'Liga', fechaInicio: '01/03/2026', fechaFin: '30/06/2026', fechaActual: 8, fechaTotal: 14},
+                {id: 'torneo_002', nombre: 'Copa Ciudad 2026', emoji: '🏅', estado: 'inscripcion', categoria: 'Libre', formato: 'Grupos + Elim', fechaInicio: '15/07/2026', fechaFin: '30/08/2026', equipos: 8, equiposCupo: 12},
+                {id: 'torneo_003', nombre: 'Torneo Relámpago Junio', emoji: '⚡', estado: 'programado', categoria: 'Sub-20', formato: 'Elim. Directa', fechaInicio: '28/06/2026', fechaFin: '28/06/2026', equipos: 4, equiposCupo: 8}
+            ];
+            appData.equipos = [
+                {id: 'eq_001', nombre: 'Atlético San Martín', color: '#1565c0', categoria: 'Primera', delegado: 'Carlos Méndez', estado: 'activo', jugadores: 22},
+                {id: 'eq_002', nombre: 'Deportivo Norte', color: '#2e7d32', categoria: 'Primera', delegado: 'Roberto Paz', estado: 'activo', jugadores: 20},
+                {id: 'eq_003', nombre: 'Club Social Belgrano', color: '#6a1b9a', categoria: 'Primera', delegado: 'Hugo Villalba', estado: 'activo', jugadores: 19},
+                {id: 'eq_004', nombre: 'Racing Tucumán', color: '#c62828', categoria: 'Primera', delegado: 'Martín Juárez', estado: 'activo', jugadores: 21},
+                {id: 'eq_005', nombre: 'San Lorenzo FC', color: '#00838f', categoria: 'Primera', delegado: 'Pablo Sánchez', estado: 'activo', jugadores: 18},
+                {id: 'eq_006', nombre: 'Independiente Sur', color: '#ef6c00', categoria: 'Primera', delegado: 'Diego Acosta', estado: 'suspendido', jugadores: 17},
+                {id: 'eq_007', nombre: 'Boca Juniors FC', color: '#0d47a1', categoria: 'Primera', delegado: 'Fernando López', estado: 'activo', jugadores: 23},
+                {id: 'eq_008', nombre: 'River Plate FC', color: '#b71c1c', categoria: 'Primera', delegado: 'Alejandro Ruiz', estado: 'activo', jugadores: 22}
+            ];
+            appData.jugadores = [
+                {id: 'jug_001', nombre: 'Matías Rodríguez', equipo: 'eq_001', posicion: 'Delantero', edad: 27, pj: 8, goles: 9, amarillas: 2, rojas: 0, estado: 'habilitado'},
+                {id: 'jug_002', nombre: 'Franco Díaz', equipo: 'eq_004', posicion: 'Delantero', edad: 24, pj: 8, goles: 7, amarillas: 1, rojas: 0, estado: 'habilitado'},
+                {id: 'jug_003', nombre: 'Nicolás Pereyra', equipo: 'eq_002', posicion: 'Mediocampista', edad: 29, pj: 7, goles: 6, amarillas: 3, rojas: 0, estado: 'habilitado'},
+                {id: 'jug_004', nombre: 'Agustín Romero', equipo: 'eq_007', posicion: 'Delantero', edad: 22, pj: 8, goles: 5, amarillas: 0, rojas: 0, estado: 'habilitado'},
+                {id: 'jug_005', nombre: 'Leandro Castro', equipo: 'eq_008', posicion: 'Mediocampista', edad: 26, pj: 8, goles: 4, amarillas: 4, rojas: 0, estado: 'adv-amarilla'},
+                {id: 'jug_006', nombre: 'Luciano Fernández', equipo: 'eq_006', posicion: 'Defensor', edad: 31, pj: 6, goles: 0, amarillas: 3, rojas: 1, estado: 'suspendido'}
+            ];
+            appData.partidos = [
+                {id: 'part_001', local: 'eq_001', visitante: 'eq_006', golesLocal: 3, golesVisitante: 1, estado: 'finalizado', fecha: '12/06', cancha: 'Cancha N°1'},
+                {id: 'part_002', local: 'eq_007', visitante: 'eq_003', golesLocal: 2, golesVisitante: 2, estado: 'finalizado', fecha: '12/06', cancha: 'Cancha N°2'},
+                {id: 'part_003', local: 'eq_002', visitante: 'eq_005', golesLocal: 2, golesVisitante: 0, estado: 'finalizado', fecha: '12/06', cancha: 'Cancha N°3'},
+                {id: 'part_004', local: 'eq_004', visitante: 'eq_008', golesLocal: 0, golesVisitante: 0, estado: 'programado', fecha: '14/06', hora: '17:00', cancha: 'Cancha N°1'}
+            ];
+            saveData();
+        }
+
+        function saveData() {
+            localStorage.setItem('futgolData', JSON.stringify(appData));
+        }
+
+        function getEquipoNombre(id) {
+            const eq = appData.equipos.find(e => e.id === id);
+            return eq ? eq.nombre : 'Desconocido';
+        }
+
+        function getEquipoColor(id) {
+            const eq = appData.equipos.find(e => e.id === id);
+            return eq ? eq.color : '#999';
+        }
+
+        // ========== RENDERIZAR TABLAS ==========
+        function renderEquiposTable() {
+            const tbody = document.querySelector('#page-equipos table tbody');
+            if (!tbody) return;
+            
+            tbody.innerHTML = appData.equipos.map((eq, idx) => `
+                <tr>
+                    <td>${idx + 1}</td>
+                    <td><span class="team-dot" style="background:${eq.color}"></span></td>
+                    <td><b>${eq.nombre}</b></td>
+                    <td>${eq.categoria}</td>
+                    <td>${eq.jugadores}</td>
+                    <td>${eq.delegado}</td>
+                    <td><span class="status status-${eq.estado === 'activo' ? 'active' : 'inactive'}">${eq.estado === 'activo' ? 'Activo' : 'Suspendido'}</span></td>
+                    <td>
+                        <button class="btn btn-outline" style="padding:6px 12px;font-size:12px" onclick="editarEquipo('${eq.id}')">✏️ Editar</button>
+                        <button class="btn btn-outline" style="padding:6px 12px;font-size:12px;background:#ffebee;color:#c62828" onclick="eliminarEquipo('${eq.id}')">🗑️ Borrar</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderJugadoresTable() {
+            const tbody = document.querySelector('#page-jugadores table tbody');
+            if (!tbody) return;
+            
+            tbody.innerHTML = appData.jugadores.map((jug, idx) => `
+                <tr>
+                    <td>${idx + 1}</td>
+                    <td><b>${jug.nombre}</b></td>
+                    <td><span class="team-name"><span class="team-dot" style="background:${getEquipoColor(jug.equipo)}"></span>${getEquipoNombre(jug.equipo)}</span></td>
+                    <td>${jug.posicion}</td>
+                    <td>${jug.edad}</td>
+                    <td>${jug.pj}</td>
+                    <td style="font-weight:700;color:var(--accent)">${jug.goles}</td>
+                    <td>${jug.amarillas}</td>
+                    <td>${jug.rojas}</td>
+                    <td><span class="status status-${jug.estado === 'habilitado' ? 'active' : jug.estado === 'adv-amarilla' ? 'pending' : 'inactive'}">${jug.estado === 'habilitado' ? 'Habilitado' : jug.estado === 'adv-amarilla' ? '⚠️ 4ta amarilla' : 'Suspendido'}</span></td>
+                    <td>
+                        <button class="btn btn-outline" style="padding:6px 12px;font-size:12px" onclick="editarJugador('${jug.id}')">✏️ Edit</button>
+                        <button class="btn btn-outline" style="padding:6px 12px;font-size:12px;background:#ffebee;color:#c62828" onclick="eliminarJugador('${jug.id}')">🗑️ Del</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderTorneosCards() {
+            const grid = document.querySelector('.torneos-grid');
+            if (!grid) return;
+            
+            grid.innerHTML = appData.torneos.map(t => `
+                <div class="torneo-card">
+                    <div class="torneo-banner torneo-banner-${t.estado === 'en-curso' ? '1' : t.estado === 'inscripcion' ? '2' : '3'}">${t.emoji}</div>
+                    <div class="torneo-content">
+                        <div style="display:flex;justify-content:space-between;align-items:center">
+                            <h3>${t.nombre}</h3>
+                            <span class="status status-${t.estado === 'en-curso' ? 'active' : t.estado === 'inscripcion' ? 'pending' : 'draft'}">${t.estado === 'en-curso' ? 'En curso' : t.estado === 'inscripcion' ? 'Inscripción' : 'Programado'}</span>
+                        </div>
+                        <div class="torneo-meta">
+                            <div class="torneo-meta-item">📅 ${t.fechaInicio} — ${t.fechaFin}</div>
+                            <div class="torneo-meta-item">👥 ${t.equipos || 0} equipos • Categoría ${t.categoria}</div>
+                            <div class="torneo-meta-item">📊 Formato: ${t.formato}</div>
+                        </div>
+                        <div style="margin-top: 12px; display: flex; gap: 8px;">
+                            <button class="btn btn-outline" style="flex:1;font-size:12px;padding:8px" onclick="editarTorneo('${t.id}')">✏️ Editar</button>
+                            <button class="btn btn-outline" style="flex:1;font-size:12px;padding:8px;background:#ffebee;color:#c62828" onclick="eliminarTorneo('${t.id}')">🗑️ Borrar</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ========== RENDER: PARTIDOS ==========
+        function renderPartidosTable() {
+            const tbody = document.querySelector('#partidosTable tbody');
+            if (!tbody) return;
+            
+            tbody.innerHTML = appData.partidos.map((p, idx) => {
+                const local = appData.equipos.find(e => e.id === p.local);
+                const visit = appData.equipos.find(e => e.id === p.visitante);
+                return `
+                    <tr>
+                        <td>${idx + 1}</td>
+                        <td><b>${local?.nombre || 'N/A'}</b></td>
+                        <td style="text-align:center"><b>${p.golesLocal}</b></td>
+                        <td style="text-align:center">vs</td>
+                        <td style="text-align:center"><b>${p.golesVisitante}</b></td>
+                        <td><b>${visit?.nombre || 'N/A'}</b></td>
+                        <td><span class="status status-${p.estado === 'finalizado' ? 'active' : 'pending'}">${p.estado === 'finalizado' ? 'Finalizado' : 'Programado'}</span></td>
+                        <td>
+                            <button class="btn btn-outline" style="padding:6px 12px;font-size:12px" onclick="editarPartido('${p.id}')">✏️</button>
+                            <button class="btn btn-outline" style="padding:6px 12px;font-size:12px;background:#ffebee;color:#c62828" onclick="eliminarPartido('${p.id}')">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // ========== RENDER: POSICIONES ==========
+        function renderPosiciones() {
+            const torneo_id = document.getElementById('posiciones_torneo').value;
+            const tbody = document.querySelector('#posicionesTable tbody');
+            if (!tbody) return;
+            
+            let posiciones = appData.posiciones.filter(p => !torneo_id || p.torneo === torneo_id);
+            posiciones.sort((a, b) => a.posicion - b.posicion);
+            
+            tbody.innerHTML = posiciones.map(p => {
+                const eq = appData.equipos.find(e => e.id === p.equipo);
+                return `
+                    <tr>
+                        <td style="font-weight:bold">${p.posicion}</td>
+                        <td>${eq?.nombre || 'N/A'}</td>
+                        <td>${p.pj}</td>
+                        <td>${p.pg}</td>
+                        <td>${p.pe}</td>
+                        <td>${p.pp}</td>
+                        <td>${p.gf}</td>
+                        <td>${p.gc}</td>
+                        <td>${p.dg}</td>
+                        <td style="font-weight:bold;color:var(--accent)">${p.pts}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // ========== RENDER: GOLEADORES ==========
+        function renderGoleadores() {
+            const torneo_id = document.getElementById('goleadores_torneo').value;
+            const container = document.getElementById('goleadoresContainer');
+            if (!container) return;
+            
+            let jugadores = appData.jugadores.sort((a, b) => b.goles - a.goles);
+            if (torneo_id) jugadores = jugadores.filter(j => appData.partidos.some(p => p.torneo === torneo_id));
+            
+            container.innerHTML = jugadores.slice(0, 10).map((j, idx) => {
+                const eq = appData.equipos.find(e => e.id === j.equipo);
+                return `
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--border);border-radius:8px">
+                        <div style="display:flex;align-items:center;gap:12px;flex:1">
+                            <div style="width:36px;height:36px;border-radius:50%;background:${eq?.color};color:white;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px">${idx + 1}</div>
+                            <div>
+                                <div style="font-weight:bold">${j.nombre}</div>
+                                <div style="font-size:12px;color:var(--text-secondary)">${eq?.nombre || 'N/A'}</div>
+                            </div>
+                        </div>
+                        <div style="font-size:24px;font-weight:bold;color:var(--accent)">${j.goles}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ========== RENDER: DISCIPLINA ==========
+        function renderDisciplinaTable() {
+            const tbody = document.querySelector('#disciplinaTable tbody');
+            if (!tbody) return;
+            
+            tbody.innerHTML = appData.disciplinas.map(d => {
+                const jug = appData.jugadores.find(j => j.id === d.jugador);
+                const eq = appData.equipos.find(e => e.id === jug?.equipo);
+                return `
+                    <tr>
+                        <td>${jug?.nombre || 'N/A'}</td>
+                        <td>${eq?.nombre || 'N/A'}</td>
+                        <td style="text-align:center">${d.tipo === 'amarilla' ? '🟨' : '🔴'} ${d.tipo}</td>
+                        <td>${d.fecha || '-'}</td>
+                        <td>
+                            <button class="btn btn-outline" style="padding:6px 12px;font-size:12px;background:#ffebee;color:#c62828" onclick="eliminarDisciplina('${d.id}')">🗑️ Quitar</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // ========== RENDER: CANCHAS ==========
+        function renderCanchas() {
+            const container = document.getElementById('anchasContainer');
+            if (!container) return;
+            
+            container.innerHTML = appData.canchas.map(c => `
+                <div style="background:var(--card);padding:16px;border-radius:12px;border:1px solid var(--border)">
+                    <h4>${c.nombre}</h4>
+                    <div style="font-size:14px;color:var(--text-secondary);margin:8px 0">
+                        📍 ${c.ubicacion || 'Ubicación no especificada'}<br>
+                        👥 Capacidad: ${c.capacidad || '-'} personas<br>
+                        ☎️ ${c.telefono || 'N/A'}
+                    </div>
+                    <div style="display:flex;gap:8px;margin-top:12px">
+                        <button class="btn btn-outline" style="flex:1;padding:6px;font-size:12px" onclick="editarCancha('${c.id}')">✏️</button>
+                        <button class="btn btn-outline" style="flex:1;padding:6px;font-size:12px;background:#ffebee;color:#c62828" onclick="eliminarCancha('${c.id}')">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ========== RENDER: ÁRBITROS ==========
+        function renderArbitrosTable() {
+            const tbody = document.querySelector('#arbitrosTable tbody');
+            if (!tbody) return;
+            
+            tbody.innerHTML = appData.arbitros.map(a => `
+                <tr>
+                    <td><b>${a.nombre}</b></td>
+                    <td>${a.licencia}</td>
+                    <td>${a.categoria}</td>
+                    <td>${a.partidos || 0}</td>
+                    <td>
+                        <button class="btn btn-outline" style="padding:6px 12px;font-size:12px" onclick="editarArbitro('${a.id}')">✏️</button>
+                        <button class="btn btn-outline" style="padding:6px 12px;font-size:12px;background:#ffebee;color:#c62828" onclick="eliminarArbitro('${a.id}')">🗑️</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // ========== RENDER: PAGOS ==========
+        function renderPagosTable() {
+            const tbody = document.querySelector('#pagosTable tbody');
+            if (!tbody) return;
+            
+            let totalIngresos = 0, totalEgresos = 0;
+            
+            tbody.innerHTML = appData.pagos.map(p => {
+                if (p.tipo === 'ingreso') totalIngresos += p.monto;
+                else totalEgresos += p.monto;
+                
+                return `
+                    <tr>
+                        <td>${p.concepto}</td>
+                        <td>${p.entidad || '-'}</td>
+                        <td style="text-align:right"><b>$${p.monto}</b></td>
+                        <td><span style="font-size:11px;background:${p.tipo === 'ingreso' ? '#e8f5e9' : '#ffebee'};color:${p.tipo === 'ingreso' ? '#2e7d32' : '#c62828'};padding:4px 8px;border-radius:4px">${p.tipo}</span></td>
+                        <td>${p.fecha || new Date().toLocaleDateString('es-AR')}</td>
+                        <td>
+                            <button class="btn btn-outline" style="padding:6px 12px;font-size:12px;background:#ffebee;color:#c62828" onclick="eliminarPago('${p.id}')">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            document.getElementById('totalIngresos').textContent = '$' + totalIngresos;
+            document.getElementById('totalEgresos').textContent = '$' + totalEgresos;
+            document.getElementById('totalSaldo').textContent = '$' + (totalIngresos - totalEgresos);
+        }
+
+        // ========== RENDER: FIXTURE ==========
+        function renderFixture() {
+            const torneo_id = document.getElementById('fixture_torneo').value;
+            const container = document.getElementById('fixtureContainer');
+            if (!container || !torneo_id) { container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-secondary)">Selecciona un torneo para ver la fixture</div>'; return; }
+            
+            let partidos = appData.partidos.filter(p => p.torneo === torneo_id);
+            if (partidos.length === 0) partidos = [];
+            
+            container.innerHTML = partidos.map(p => {
+                const local = appData.equipos.find(e => e.id === p.local);
+                const visit = appData.equipos.find(e => e.id === p.visitante);
+                return `
+                    <div style="background:white;padding:12px;border-radius:8px;border-left:4px solid var(--accent);display:flex;justify-content:space-between;align-items:center">
+                        <div style="display:flex;align-items:center;gap:16px;flex:1">
+                            <div style="font-weight:bold;color:var(--text-secondary);width:60px">${p.fecha || 'Por definir'}</div>
+                            <div>${local?.nombre || 'Local'}</div>
+                            <div style="font-size:20px;font-weight:bold;color:var(--accent)">${p.golesLocal} - ${p.golesVisitante}</div>
+                            <div>${visit?.nombre || 'Visitante'}</div>
+                        </div>
+                        <span class="status status-${p.estado === 'finalizado' ? 'active' : 'pending'}">${p.estado === 'finalizado' ? '✓ Finalizado' : '⏱ Programado'}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ========== CRUD: CREAR/EDITAR/BORRAR ==========
+        function editarPartido(id) {
+            const p = appData.partidos.find(x => x.id === id);
+            if (!p) return;
+            const nuevoLocal = prompt('Goles local:', p.golesLocal);
+            if (nuevoLocal === null) return;
+            p.golesLocal = parseInt(nuevoLocal) || 0;
+            const nuevoVisita = prompt('Goles visitante:', p.golesVisitante);
+            if (nuevoVisita === null) return;
+            p.golesVisitante = parseInt(nuevoVisita) || 0;
+            saveData();
+            renderPartidosTable();
+            alert('✅ Partido actualizado');
+        }
+
+        function eliminarPartido(id) {
+            if (!confirm('¿Eliminar este partido?')) return;
+            appData.partidos = appData.partidos.filter(p => p.id !== id);
+            saveData();
+            renderPartidosTable();
+            alert('✅ Partido eliminado');
+        }
+
+        function editarCancha(id) {
+            const c = appData.canchas.find(x => x.id === id);
+            if (!c) return;
+            const nuevoNombre = prompt('Nombre:', c.nombre);
+            if (nuevoNombre) { c.nombre = nuevoNombre; saveData(); renderCanchas(); alert('✅ Actualizado'); }
+        }
+
+        function eliminarCancha(id) {
+            if (!confirm('¿Eliminar cancha?')) return;
+            appData.canchas = appData.canchas.filter(c => c.id !== id);
+            saveData();
+            renderCanchas();
+            alert('✅ Cancha eliminada');
+        }
+
+        function editarArbitro(id) {
+            const a = appData.arbitros.find(x => x.id === id);
+            if (!a) return;
+            const nuevoNombre = prompt('Nombre:', a.nombre);
+            if (nuevoNombre) { a.nombre = nuevoNombre; saveData(); renderArbitrosTable(); alert('✅ Actualizado'); }
+        }
+
+        function eliminarArbitro(id) {
+            if (!confirm('¿Eliminar árbitro?')) return;
+            appData.arbitros = appData.arbitros.filter(a => a.id !== id);
+            saveData();
+            renderArbitrosTable();
+            alert('✅ Árbitro eliminado');
+        }
+
+        function eliminarDisciplina(id) {
+            appData.disciplinas = appData.disciplinas.filter(d => d.id !== id);
+            saveData();
+            renderDisciplinaTable();
+        }
+
+        function eliminarPago(id) {
+            appData.pagos = appData.pagos.filter(p => p.id !== id);
+            saveData();
+            renderPagosTable();
+        }
+
+        function descargarBackup() {
+            const json = JSON.stringify(appData, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'futgol_backup_' + new Date().toISOString().split('T')[0] + '.json';
+            a.click();
+        }
+
+        function restaurarBackup(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    Object.assign(appData, data);
+                    saveData();
+                    location.reload();
+                } catch (err) {
+                    alert('Error al restaurar: archivo inválido');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // ========== UPDATE STATS ==========
+        function updateStats() {
+            document.getElementById('stats_torneos').textContent = appData.torneos.length;
+            document.getElementById('stats_equipos').textContent = appData.equipos.length;
+            document.getElementById('stats_jugadores').textContent = appData.jugadores.length;
+            document.getElementById('stats_partidos').textContent = appData.partidos.length;
+        }
+
+        // ========== CRUD OPERATIONS ==========
+        function editarEquipo(id) {
+            const eq = appData.equipos.find(e => e.id === id);
+            if (!eq) return;
+            
+            const nuevoNombre = prompt('Nuevo nombre:', eq.nombre);
+            if (nuevoNombre) {
+                eq.nombre = nuevoNombre;
+                saveData();
+                renderEquiposTable();
+                alert('✅ Equipo actualizado');
+            }
+        }
+
+        function eliminarEquipo(id) {
+            if (!confirm('¿Estás seguro de que deseas eliminar este equipo?')) return;
+            appData.equipos = appData.equipos.filter(e => e.id !== id);
+            saveData();
+            renderEquiposTable();
+            alert('✅ Equipo eliminado');
+        }
+
+        function editarJugador(id) {
+            const jug = appData.jugadores.find(j => j.id === id);
+            if (!jug) return;
+            
+            const nuevoNombre = prompt('Nuevo nombre:', jug.nombre);
+            if (nuevoNombre) {
+                jug.nombre = nuevoNombre;
+                saveData();
+                renderJugadoresTable();
+                alert('✅ Jugador actualizado');
+            }
+        }
+
+        function eliminarJugador(id) {
+            if (!confirm('¿Estás seguro de que deseas eliminar este jugador?')) return;
+            appData.jugadores = appData.jugadores.filter(j => j.id !== id);
+            saveData();
+            renderJugadoresTable();
+            alert('✅ Jugador eliminado');
+        }
+
+        function editarTorneo(id) {
+            const t = appData.torneos.find(tr => tr.id === id);
+            if (!t) return;
+            
+            const nuevoNombre = prompt('Nuevo nombre:', t.nombre);
+            if (nuevoNombre) {
+                t.nombre = nuevoNombre;
+                saveData();
+                renderTorneosCards();
+                alert('✅ Torneo actualizado');
+            }
+        }
+
+        function eliminarTorneo(id) {
+            if (!confirm('¿Estás seguro de que deseas eliminar este torneo?')) return;
+            appData.torneos = appData.torneos.filter(t => t.id !== id);
+            saveData();
+            renderTorneosCards();
+            alert('✅ Torneo eliminado');
+        }
+
+        // ========== NAVIGATION ==========
+        const navItems = document.querySelectorAll('.nav-item');
+        const pages = document.querySelectorAll('.page');
+
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                navItems.forEach(n => n.classList.remove('active'));
+                item.classList.add('active');
+                const pageId = item.getAttribute('data-page');
+                pages.forEach(p => p.classList.remove('active'));
+                const targetPage = document.getElementById('page-' + pageId);
+                if (targetPage) {
+                    targetPage.classList.add('active');
+                    // Renderizar tablas cuando se abren
+                    if (pageId === 'equipos') renderEquiposTable();
+                    if (pageId === 'jugadores') renderJugadoresTable();
+                    if (pageId === 'torneos') renderTorneosCards();
+                }
+            });
+        });
+
+        // ========== MODAL FUNCTIONS ==========
+        function openModal(type) {
+            const overlay = document.getElementById('modalOverlay');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+
+            if (type === 'torneo') {
+                title.textContent = '🏆 Nuevo Torneo';
+                body.innerHTML = `
+                    <div class="form-group">
+                        <label>Nombre del Torneo</label>
+                        <input type="text" id="torneo_nombre" placeholder="Ej: Liga Clausura 2026">
+                    </div>
+                    <div class="form-group">
+                        <label>Categoría</label>
+                        <select id="torneo_categoria">
+                            <option>Primera</option>
+                            <option>Sub-20</option>
+                            <option>Sub-15</option>
+                            <option>Libre</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Formato</label>
+                        <select id="torneo_formato">
+                            <option>Liga (todos contra todos)</option>
+                            <option>Eliminación directa</option>
+                            <option>Grupos + Eliminación</option>
+                        </select>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+                        <div class="form-group">
+                            <label>Fecha Inicio</label>
+                            <input type="date" id="torneo_inicio">
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha Fin</label>
+                            <input type="date" id="torneo_fin">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Máximo de Equipos</label>
+                        <input type="number" id="torneo_max" placeholder="Ej: 8" min="2">
+                    </div>
+                `;
+                window.modalType = 'torneo';
+            } else if (type === 'equipo') {
+                title.textContent = '👥 Nuevo Equipo';
+                body.innerHTML = `
+                    <div class="form-group">
+                        <label>Nombre del Equipo</label>
+                        <input type="text" id="equipo_nombre" placeholder="Ej: Deportivo Central">
+                    </div>
+                    <div class="form-group">
+                        <label>Color Principal</label>
+                        <input type="color" id="equipo_color" value="#00c853" style="height:42px">
+                    </div>
+                    <div class="form-group">
+                        <label>Categoría</label>
+                        <select id="equipo_categoria">
+                            <option>Primera</option>
+                            <option>Sub-20</option>
+                            <option>Sub-15</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Nombre del Delegado</label>
+                        <input type="text" id="equipo_delegado" placeholder="Nombre completo">
+                    </div>
+                    <div class="form-group">
+                        <label>Teléfono</label>
+                        <input type="tel" id="equipo_telefono" placeholder="+54 9 381 555 1234">
+                    </div>
+                `;
+                window.modalType = 'equipo';
+            } else if (type === 'jugador') {
+                title.textContent = '🧑 Nuevo Jugador';
+                body.innerHTML = `
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+                        <div class="form-group">
+                            <label>Nombre</label>
+                            <input type="text" id="jugador_nombre" placeholder="Nombre">
+                        </div>
+                        <div class="form-group">
+                            <label>Apellido</label>
+                            <input type="text" id="jugador_apellido" placeholder="Apellido">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Equipo</label>
+                        <select id="jugador_equipo">
+                            ${appData.equipos.map(e => `<option value="${e.id}">${e.nombre}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+                        <div class="form-group">
+                            <label>Posición</label>
+                            <select id="jugador_posicion">
+                                <option>Arquero</option>
+                                <option>Defensor</option>
+                                <option>Mediocampista</option>
+                                <option>Delantero</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Edad</label>
+                            <input type="number" id="jugador_edad" placeholder="25" min="16" max="50">
+                        </div>
+                    </div>
+                `;
+                window.modalType = 'jugador';
+            } else if (type === 'partido') {
+                title.textContent = '⚽ Nuevo Partido';
+                body.innerHTML = `
+                    <div class="form-group">
+                        <label>Torneo</label>
+                        <select id="partido_torneo">
+                            ${appData.torneos.map(t => `<option value="${t.id}">${t.nombre}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+                        <div class="form-group">
+                            <label>Equipo Local</label>
+                            <select id="partido_local">
+                                ${appData.equipos.map(e => `<option value="${e.id}">${e.nombre}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Goles Local</label>
+                            <input type="number" id="partido_golesLocal" placeholder="0" min="0" value="0">
+                        </div>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+                        <div class="form-group">
+                            <label>Equipo Visitante</label>
+                            <select id="partido_visitante">
+                                ${appData.equipos.map(e => `<option value="${e.id}">${e.nombre}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Goles Visitante</label>
+                            <input type="number" id="partido_golesVisitante" placeholder="0" min="0" value="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha</label>
+                        <input type="date" id="partido_fecha">
+                    </div>
+                `;
+                window.modalType = 'partido';
+            } else if (type === 'cancha') {
+                title.textContent = '🏟️ Nueva Cancha';
+                body.innerHTML = `
+                    <div class="form-group">
+                        <label>Nombre de la Cancha</label>
+                        <input type="text" id="cancha_nombre" placeholder="Ej: Cancha Municipal">
+                    </div>
+                    <div class="form-group">
+                        <label>Ubicación</label>
+                        <input type="text" id="cancha_ubicacion" placeholder="Dirección">
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+                        <div class="form-group">
+                            <label>Capacidad</label>
+                            <input type="number" id="cancha_capacidad" placeholder="Personas" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Teléfono</label>
+                            <input type="tel" id="cancha_telefono" placeholder="Contacto">
+                        </div>
+                    </div>
+                `;
+                window.modalType = 'cancha';
+            } else if (type === 'arbitro') {
+                title.textContent = '👨‍⚖️ Nuevo Árbitro';
+                body.innerHTML = `
+                    <div class="form-group">
+                        <label>Nombre Completo</label>
+                        <input type="text" id="arbitro_nombre" placeholder="Nombre">
+                    </div>
+                    <div class="form-group">
+                        <label>Número de Licencia</label>
+                        <input type="text" id="arbitro_licencia" placeholder="Ej: ARB-001">
+                    </div>
+                    <div class="form-group">
+                        <label>Categoría</label>
+                        <select id="arbitro_categoria">
+                            <option>General</option>
+                            <option>Primera</option>
+                            <option>Sub-20</option>
+                            <option>Sub-15</option>
+                        </select>
+                    </div>
+                `;
+                window.modalType = 'arbitro';
+            } else if (type === 'disciplina') {
+                title.textContent = '🟨 Registrar Tarjeta';
+                body.innerHTML = `
+                    <div class="form-group">
+                        <label>Jugador</label>
+                        <select id="disciplina_jugador">
+                            ${appData.jugadores.map(j => `<option value="${j.id}">${j.nombre}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo de Tarjeta</label>
+                        <select id="disciplina_tipo">
+                            <option value="amarilla">🟨 Tarjeta Amarilla</option>
+                            <option value="roja">🔴 Tarjeta Roja</option>
+                        </select>
+                    </div>
+                `;
+                window.modalType = 'disciplina';
+            } else if (type === 'pago') {
+                title.textContent = '💰 Registrar Pago';
+                body.innerHTML = `
+                    <div class="form-group">
+                        <label>Concepto</label>
+                        <input type="text" id="pago_concepto" placeholder="Ej: Inscripción Liga">
+                    </div>
+                    <div class="form-group">
+                        <label>Equipo/Jugador</label>
+                        <input type="text" id="pago_entidad" placeholder="Opcional">
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+                        <div class="form-group">
+                            <label>Monto ($)</label>
+                            <input type="number" id="pago_monto" placeholder="0" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Tipo</label>
+                            <select id="pago_tipo">
+                                <option value="ingreso">💚 Ingreso</option>
+                                <option value="egreso">❤️ Egreso</option>
+                            </select>
+                        </div>
+                    </div>
+                `;
+                window.modalType = 'pago';
+            } else {
+                title.textContent = '➕ Acciones Rápidas';
+                body.innerHTML = `
+                    <div style="display:grid;gap:12px;">
+                        <button class="btn btn-outline" style="width:100%;justify-content:flex-start;padding:16px 20px;font-size:15px" onclick="closeModal();setTimeout(()=>openModal('torneo'),200)">🏆 Crear Nuevo Torneo</button>
+                        <button class="btn btn-outline" style="width:100%;justify-content:flex-start;padding:16px 20px;font-size:15px" onclick="closeModal();setTimeout(()=>openModal('equipo'),200)">👥 Registrar Nuevo Equipo</button>
+                        <button class="btn btn-outline" style="width:100%;justify-content:flex-start;padding:16px 20px;font-size:15px" onclick="closeModal();setTimeout(()=>openModal('jugador'),200)">🧑 Registrar Nuevo Jugador</button>
+                    </div>
+                `;
+            }
+
+            overlay.classList.add('show');
+        }
+
+        function guardarRegistro() {
+            if (window.modalType === 'torneo') {
+                const nombre = document.getElementById('torneo_nombre').value;
+                if (!nombre) { alert('Por favor completa el nombre'); return; }
+                
+                const nuevoTorneo = {
+                    id: 'torneo_' + Date.now(),
+                    nombre: nombre,
+                    emoji: '🏆',
+                    estado: 'programado',
+                    categoria: document.getElementById('torneo_categoria').value,
+                    formato: document.getElementById('torneo_formato').value,
+                    fechaInicio: document.getElementById('torneo_inicio').value,
+                    fechaFin: document.getElementById('torneo_fin').value,
+                    equiposCupo: parseInt(document.getElementById('torneo_max').value) || 8,
+                    equipos: 0
+                };
+                appData.torneos.push(nuevoTorneo);
+            } else if (window.modalType === 'equipo') {
+                const nombre = document.getElementById('equipo_nombre').value;
+                if (!nombre) { alert('Por favor completa el nombre'); return; }
+                
+                const nuevoEquipo = {
+                    id: 'eq_' + Date.now(),
+                    nombre: nombre,
+                    color: document.getElementById('equipo_color').value,
+                    categoria: document.getElementById('equipo_categoria').value,
+                    delegado: document.getElementById('equipo_delegado').value,
+                    estado: 'activo',
+                    jugadores: 0
+                };
+                appData.equipos.push(nuevoEquipo);
+            } else if (window.modalType === 'jugador') {
+                const nombre = document.getElementById('jugador_nombre').value;
+                const apellido = document.getElementById('jugador_apellido').value;
+                if (!nombre || !apellido) { alert('Por favor completa nombre y apellido'); return; }
+                
+                const nuevoJugador = {
+                    id: 'jug_' + Date.now(),
+                    nombre: nombre + ' ' + apellido,
+                    equipo: document.getElementById('jugador_equipo').value,
+                    posicion: document.getElementById('jugador_posicion').value,
+                    edad: parseInt(document.getElementById('jugador_edad').value) || 0,
+                    pj: 0,
+                    goles: 0,
+                    amarillas: 0,
+                    rojas: 0,
+                    estado: 'habilitado'
+                };
+                appData.jugadores.push(nuevoJugador);
+            } else if (window.modalType === 'partido') {
+                const local = document.getElementById('partido_local')?.value;
+                const visitante = document.getElementById('partido_visitante')?.value;
+                const golesLocal = parseInt(document.getElementById('partido_golesLocal')?.value) || 0;
+                const golesVisitante = parseInt(document.getElementById('partido_golesVisitante')?.value) || 0;
+                const fecha = document.getElementById('partido_fecha')?.value;
+                
+                if (!local || !visitante) { alert('Completa local y visitante'); return; }
+                
+                const nuevoPartido = {
+                    id: 'part_' + Date.now(),
+                    local: local,
+                    visitante: visitante,
+                    golesLocal: golesLocal,
+                    golesVisitante: golesVisitante,
+                    estado: 'programado',
+                    fecha: fecha || new Date().toLocaleDateString('es-AR'),
+                    torneo: document.getElementById('partido_torneo')?.value || ''
+                };
+                appData.partidos.push(nuevoPartido);
+            } else if (window.modalType === 'cancha') {
+                const nombre = document.getElementById('cancha_nombre')?.value;
+                if (!nombre) { alert('Ingresa nombre de cancha'); return; }
+                
+                appData.canchas.push({
+                    id: 'cancha_' + Date.now(),
+                    nombre: nombre,
+                    ubicacion: document.getElementById('cancha_ubicacion')?.value || '',
+                    capacidad: document.getElementById('cancha_capacidad')?.value || '',
+                    telefono: document.getElementById('cancha_telefono')?.value || ''
+                });
+            } else if (window.modalType === 'arbitro') {
+                const nombre = document.getElementById('arbitro_nombre')?.value;
+                if (!nombre) { alert('Ingresa nombre del árbitro'); return; }
+                
+                appData.arbitros.push({
+                    id: 'arb_' + Date.now(),
+                    nombre: nombre,
+                    licencia: document.getElementById('arbitro_licencia')?.value || '',
+                    categoria: document.getElementById('arbitro_categoria')?.value || 'General',
+                    partidos: 0
+                });
+            } else if (window.modalType === 'disciplina') {
+                const jugador = document.getElementById('disciplina_jugador')?.value;
+                const tipo = document.getElementById('disciplina_tipo')?.value;
+                if (!jugador || !tipo) { alert('Completa jugador y tipo de tarjeta'); return; }
+                
+                appData.disciplinas.push({
+                    id: 'disc_' + Date.now(),
+                    jugador: jugador,
+                    tipo: tipo,
+                    fecha: new Date().toLocaleDateString('es-AR')
+                });
+            } else if (window.modalType === 'pago') {
+                const concepto = document.getElementById('pago_concepto')?.value;
+                const monto = parseInt(document.getElementById('pago_monto')?.value) || 0;
+                const tipo = document.getElementById('pago_tipo')?.value;
+                
+                if (!concepto || !monto) { alert('Completa concepto y monto'); return; }
+                
+                appData.pagos.push({
+                    id: 'pago_' + Date.now(),
+                    concepto: concepto,
+                    entidad: document.getElementById('pago_entidad')?.value || '',
+                    monto: monto,
+                    tipo: tipo || 'ingreso',
+                    fecha: new Date().toLocaleDateString('es-AR')
+                });
+            }
+            
+            saveData();
+            closeModal();
+            alert('✅ Registro guardado exitosamente');
+            renderEquiposTable();
+            renderJugadoresTable();
+            renderTorneosCards();
+            renderPartidosTable();
+            renderPosiciones();
+            renderGoleadores();
+            renderDisciplinaTable();
+            renderCanchas();
+            renderArbitrosTable();
+            renderPagosTable();
+            renderFixture();
+            updateStats();
+        }
+
+        function closeModal(event) {
+            if (event && event.target !== event.currentTarget) return;
+            document.getElementById('modalOverlay').classList.remove('show');
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // ========== INITIALIZATION ==========
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            renderEquiposTable();
+            renderJugadoresTable();
+            renderTorneosCards();
+            renderPartidosTable();
+            renderPosiciones();
+            renderGoleadores();
+            renderDisciplinaTable();
+            renderCanchas();
+            renderArbitrosTable();
+            renderPagosTable();
+            renderFixture();
+            updateStats();
+        });
+    </script>
+</body>
+</html>

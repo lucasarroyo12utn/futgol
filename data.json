@@ -1,0 +1,101 @@
+{
+  "user": {
+    "id": "user_001",
+    "name": "Lucas Arroyo",
+    "role": "Administrador",
+    "avatar": "LA"
+  },
+  "torneos": [
+    {
+      "id": "torneo_001",
+      "nombre": "Liga Apertura 2026",
+      "emoji": "🏆",
+      "estado": "en-curso",
+      "categoria": "Primera",
+      "formato": "Liga (todos contra todos)",
+      "fechaInicio": "01/03/2026",
+      "fechaFin": "30/06/2026",
+      "fechaActual": 8,
+      "fechaTotal": 14,
+      "color": "linear-gradient(135deg, #1a1a2e, #0f3460)",
+      "equipos": 8,
+      "jugadores": 156,
+      "partidos": 28,
+      "goles": 73
+    },
+    {
+      "id": "torneo_002",
+      "nombre": "Copa Ciudad 2026",
+      "emoji": "🏅",
+      "estado": "inscripcion",
+      "categoria": "Libre",
+      "formato": "Grupos + Eliminación",
+      "fechaInicio": "15/07/2026",
+      "fechaFin": "30/08/2026",
+      "fechaActual": 0,
+      "fechaTotal": 0,
+      "color": "linear-gradient(135deg, #00c853, #00897b)",
+      "equipos": 8,
+      "equiposCupo": 12,
+      "jugadores": 128,
+      "partidos": 0,
+      "goles": 0
+    },
+    {
+      "id": "torneo_003",
+      "nombre": "Torneo Relámpago Junio",
+      "emoji": "⚡",
+      "estado": "programado",
+      "categoria": "Sub-20",
+      "formato": "Eliminación directa",
+      "fechaInicio": "28/06/2026",
+      "fechaFin": "28/06/2026",
+      "fechaActual": 0,
+      "fechaTotal": 7,
+      "color": "linear-gradient(135deg, #ff9800, #f44336)",
+      "equipos": 4,
+      "equiposCupo": 8,
+      "jugadores": 64,
+      "partidos": 7,
+      "goles": 0
+    }
+  ],
+  "equipos": [
+    {"id": "eq_001", "nombre": "Atlético San Martín", "color": "#1565c0", "categoria": "Primera", "delegado": "Carlos Méndez", "estado": "activo", "jugadores": 22},
+    {"id": "eq_002", "nombre": "Deportivo Norte", "color": "#2e7d32", "categoria": "Primera", "delegado": "Roberto Paz", "estado": "activo", "jugadores": 20},
+    {"id": "eq_003", "nombre": "Club Social Belgrano", "color": "#6a1b9a", "categoria": "Primera", "delegado": "Hugo Villalba", "estado": "activo", "jugadores": 19},
+    {"id": "eq_004", "nombre": "Racing Tucumán", "color": "#c62828", "categoria": "Primera", "delegado": "Martín Juárez", "estado": "activo", "jugadores": 21},
+    {"id": "eq_005", "nombre": "San Lorenzo FC", "color": "#00838f", "categoria": "Primera", "delegado": "Pablo Sánchez", "estado": "activo", "jugadores": 18},
+    {"id": "eq_006", "nombre": "Independiente Sur", "color": "#ef6c00", "categoria": "Primera", "delegado": "Diego Acosta", "estado": "suspendido", "jugadores": 17},
+    {"id": "eq_007", "nombre": "Boca Juniors FC", "color": "#0d47a1", "categoria": "Primera", "delegado": "Fernando López", "estado": "activo", "jugadores": 23},
+    {"id": "eq_008", "nombre": "River Plate FC", "color": "#b71c1c", "categoria": "Primera", "delegado": "Alejandro Ruiz", "estado": "activo", "jugadores": 22}
+  ],
+  "jugadores": [
+    {"id": "jug_001", "nombre": "Matías Rodríguez", "equipo": "eq_001", "posicion": "Delantero", "edad": 27, "pj": 8, "goles": 9, "amarillas": 2, "rojas": 0, "estado": "habilitado"},
+    {"id": "jug_002", "nombre": "Franco Díaz", "equipo": "eq_004", "posicion": "Delantero", "edad": 24, "pj": 8, "goles": 7, "amarillas": 1, "rojas": 0, "estado": "habilitado"},
+    {"id": "jug_003", "nombre": "Nicolás Pereyra", "equipo": "eq_002", "posicion": "Mediocampista", "edad": 29, "pj": 7, "goles": 6, "amarillas": 3, "rojas": 0, "estado": "habilitado"},
+    {"id": "jug_004", "nombre": "Agustín Romero", "equipo": "eq_007", "posicion": "Delantero", "edad": 22, "pj": 8, "goles": 5, "amarillas": 0, "rojas": 0, "estado": "habilitado"},
+    {"id": "jug_005", "nombre": "Leandro Castro", "equipo": "eq_008", "posicion": "Mediocampista", "edad": 26, "pj": 8, "goles": 4, "amarillas": 4, "rojas": 0, "estado": "adv-amarilla"},
+    {"id": "jug_006", "nombre": "Luciano Fernández", "equipo": "eq_006", "posicion": "Defensor", "edad": 31, "pj": 6, "goles": 0, "amarillas": 3, "rojas": 1, "estado": "suspendido"},
+    {"id": "jug_007", "nombre": "Gonzalo Martínez", "equipo": "eq_003", "posicion": "Arquero", "edad": 33, "pj": 8, "goles": 0, "amarillas": 1, "rojas": 0, "estado": "habilitado"},
+    {"id": "jug_008", "nombre": "Sebastián Molina", "equipo": "eq_001", "posicion": "Mediocampista", "edad": 25, "pj": 8, "goles": 3, "amarillas": 2, "rojas": 0, "estado": "habilitado"},
+    {"id": "jug_009", "nombre": "Tomás Aguirre", "equipo": "eq_005", "posicion": "Defensor", "edad": 28, "pj": 7, "goles": 1, "amarillas": 5, "rojas": 0, "estado": "suspendido"},
+    {"id": "jug_010", "nombre": "Ramiro Sosa", "equipo": "eq_002", "posicion": "Delantero", "edad": 21, "pj": 6, "goles": 2, "amarillas": 1, "rojas": 0, "estado": "habilitado"}
+  ],
+  "partidos": [
+    {"id": "part_001", "local": "eq_001", "visitante": "eq_006", "golesLocal": 3, "golesVisitante": 1, "estado": "finalizado", "fecha": "12/06", "cancha": "Cancha N°1", "torneo": "torneo_001"},
+    {"id": "part_002", "local": "eq_007", "visitante": "eq_003", "golesLocal": 2, "golesVisitante": 2, "estado": "finalizado", "fecha": "12/06", "cancha": "Cancha N°2", "torneo": "torneo_001"},
+    {"id": "part_003", "local": "eq_002", "visitante": "eq_005", "golesLocal": 2, "golesVisitante": 0, "estado": "finalizado", "fecha": "12/06", "cancha": "Cancha N°3", "torneo": "torneo_001"},
+    {"id": "part_004", "local": "eq_004", "visitante": "eq_008", "golesLocal": 0, "golesVisitante": 0, "estado": "programado", "fecha": "14/06", "hora": "17:00", "cancha": "Cancha N°1", "torneo": "torneo_001"}
+  ],
+  "posiciones": [
+    {"id": "pos_001", "torneo": "torneo_001", "posicion": 1, "equipo": "eq_001", "pj": 8, "pg": 6, "pe": 1, "pp": 1, "gf": 18, "gc": 7, "dg": 11, "pts": 19},
+    {"id": "pos_002", "torneo": "torneo_001", "posicion": 2, "equipo": "eq_002", "pj": 8, "pg": 5, "pe": 2, "pp": 1, "gf": 16, "gc": 8, "dg": 8, "pts": 17},
+    {"id": "pos_003", "torneo": "torneo_001", "posicion": 3, "equipo": "eq_004", "pj": 8, "pg": 5, "pe": 1, "pp": 2, "gf": 14, "gc": 9, "dg": 5, "pts": 16},
+    {"id": "pos_004", "torneo": "torneo_001", "posicion": 4, "equipo": "eq_007", "pj": 8, "pg": 4, "pe": 2, "pp": 2, "gf": 13, "gc": 10, "dg": 3, "pts": 14},
+    {"id": "pos_005", "torneo": "torneo_001", "posicion": 5, "equipo": "eq_008", "pj": 8, "pg": 3, "pe": 3, "pp": 2, "gf": 12, "gc": 10, "dg": 2, "pts": 12},
+    {"id": "pos_006", "torneo": "torneo_001", "posicion": 6, "equipo": "eq_003", "pj": 8, "pg": 2, "pe": 3, "pp": 3, "gf": 10, "gc": 11, "dg": -1, "pts": 9},
+    {"id": "pos_007", "torneo": "torneo_001", "posicion": 7, "equipo": "eq_005", "pj": 8, "pg": 1, "pe": 2, "pp": 5, "gf": 6, "gc": 14, "dg": -8, "pts": 5},
+    {"id": "pos_008", "torneo": "torneo_001", "posicion": 8, "equipo": "eq_006", "pj": 8, "pg": 0, "pe": 2, "pp": 6, "gf": 5, "gc": 19, "dg": -14, "pts": 2}
+  ]
+}
