@@ -1164,43 +1164,43 @@
             <div class="page-title">🏆 Mis Torneos</div>
             <div class="page-subtitle">3 torneos en gestión</div>
 
-            <div class="torneo-card">
-                <div class="torneo-banner bg-1">
-                    <div class="torneo-emoji">🏆</div>
-                    <h3>Liga Apertura 2026</h3>
-                    <div class="torneo-sub">Primera · Todos contra todos</div>
-                    <div class="torneo-status-pill">⚡ En curso</div>
+            <div id="mobileTorneosList">
+                <div class="torneo-card">
+                    <div class="torneo-banner bg-1">
+                        <div class="torneo-emoji">🏆</div>
+                        <h3>Liga Apertura 2026</h3>
+                        <div class="torneo-sub">Primera · Todos contra todos</div>
+                        <div class="torneo-status-pill">⚡ En curso</div>
+                    </div>
+                    <div class="torneo-details">
+                        <div class="torneo-stats">
+                            <div>
+                                <div class="torneo-stat-value">8</div>
+                                <div class="torneo-stat-label">Equipos</div>
+                            </div>
+                            <div>
+                                <div class="torneo-stat-value">156</div>
+                                <div class="torneo-stat-label">Jugadores</div>
+                            </div>
+                            <div>
+                                <div class="torneo-stat-value">28</div>
+                                <div class="torneo-stat-label">Partidos</div>
+                            </div>
+                            <div>
+                                <div class="torneo-stat-value">73</div>
+                                <div class="torneo-stat-label">Goles</div>
+                            </div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width:57%;background:var(--accent)"></div>
+                        </div>
+                        <div class="progress-label">
+                            <span>Fecha 8 de 14</span>
+                            <span>57% completado</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="torneo-details">
-                    <div class="torneo-stats">
-                        <div>
-                            <div class="torneo-stat-value">8</div>
-                            <div class="torneo-stat-label">Equipos</div>
-                        </div>
-                        <div>
-                            <div class="torneo-stat-value">156</div>
-                            <div class="torneo-stat-label">Jugadores</div>
-                        </div>
-                        <div>
-                            <div class="torneo-stat-value">28</div>
-                            <div class="torneo-stat-label">Partidos</div>
-                        </div>
-                        <div>
-                            <div class="torneo-stat-value">73</div>
-                            <div class="torneo-stat-label">Goles</div>
-                        </div>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width:57%;background:var(--accent)"></div>
-                    </div>
-                    <div class="progress-label">
-                        <span>Fecha 8 de 14</span>
-                        <span>57% completado</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="torneo-card">
+                <div class="torneo-card">
                 <div class="torneo-banner bg-2">
                     <div class="torneo-emoji">🏅</div>
                     <h3>Copa Ciudad 2026</h3>
@@ -1289,53 +1289,7 @@
             </div>
 
             <!-- Match 1 - Finalizado -->
-            <div class="match-card">
-                <div class="match-status-bar">
-                    <span class="match-status ms-final">✅ Finalizado</span>
-                    <span class="match-cancha">🏟️ Cancha N°1 · 12/06</span>
-                </div>
-                <div class="match-teams">
-                    <div class="match-team">
-                        <div class="mt-badge" style="background:#1565c0">ASM</div>
-                        <div class="mt-info">
-                            <div class="mt-name">Atl. San Martín</div>
-                            <div class="mt-sub">⚽ Rodríguez (2), Molina</div>
-                        </div>
-                    </div>
-                    <div class="match-score">
-                        <span class="score-num" style="color:var(--accent)">3</span>
-                        <span class="score-sep">-</span>
-                        <span class="score-num">1</span>
-                    </div>
-                    <div class="match-team away">
-                        <div class="mt-badge" style="background:#ef6c00">IS</div>
-                        <div class="mt-info">
-                            <div class="mt-name">Independiente S.</div>
-                            <div class="mt-sub">⚽ Vargas</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Match 2 - Finalizado -->
-            <div class="match-card">
-                <div class="match-status-bar">
-                    <span class="match-status ms-final">✅ Finalizado</span>
-                    <span class="match-cancha">🏟️ Cancha N°2 · 12/06</span>
-                </div>
-                <div class="match-teams">
-                    <div class="match-team">
-                        <div class="mt-badge" style="background:#0d47a1">BJF</div>
-                        <div class="mt-info">
-                            <div class="mt-name">Boca Juniors FC</div>
-                            <div class="mt-sub">⚽ Romero, Herrera</div>
-                        </div>
-                    </div>
-                    <div class="match-score">
-                        <span class="score-num">2</span>
-                        <span class="score-sep">-</span>
-                        <span class="score-num">2</span>
-                    </div>
+            <div id="mobilePartidosList"></div>
                     <div class="match-team away">
                         <div class="mt-badge" style="background:#6a1b9a">CSB</div>
                         <div class="mt-info">
@@ -1802,11 +1756,9 @@
 
         // ========== RENDER FUNCTIONS ==========
         function renderTorneosCards() {
-            const container = document.querySelector('#m-torneos .app-content') || document.querySelector('#m-torneos');
-            const cards = container.querySelectorAll('.torneo-card');
-            if (cards.length <= 1) return;
-            
-            const html = appData.torneos.map(t => `
+            const container = document.getElementById('mobileTorneosList');
+            if (!container) return;
+            container.innerHTML = appData.torneos.map(t => `
                 <div class="torneo-card">
                     <div class="torneo-banner bg-${t.estado === 'en-curso' ? '1' : t.estado === 'inscripcion' ? '2' : '3'}">
                         <div class="torneo-emoji">${t.emoji}</div>
@@ -1820,7 +1772,105 @@
                         </div>
                     </div>
                 </div>
-            `).join('');
+            `).join('') || '<div style="padding:16px;color:var(--text-secondary);text-align:center">No hay torneos registrados.</div>';
+        }
+
+        function renderMobilePartidos() {
+            const container = document.getElementById('mobilePartidosList');
+            if (!container) return;
+            const html = appData.partidos.map(p => {
+                const local = appData.equipos.find(e => e.id === p.local);
+                const visit = appData.equipos.find(e => e.id === p.visitante);
+                return `
+                    <div class="match-card">
+                        <div class="match-status-bar">
+                            <span class="match-status ${p.estado === 'finalizado' ? 'ms-final' : 'ms-upcoming'}">${p.estado === 'finalizado' ? '✅ Finalizado' : '🕐 Programado'}</span>
+                            <span class="match-cancha">🏟️ ${p.cancha || 'Por definir'} · ${p.fecha || 'Sin fecha'}</span>
+                        </div>
+                        <div class="match-teams">
+                            <div class="match-team">
+                                <div class="mt-badge" style="background:${getEquipoColor(p.local)}">${local?.nombre?.split(' ').map(w => w[0]).join('').slice(0,3) || 'LOC'}</div>
+                                <div class="mt-info">
+                                    <div class="mt-name">${local?.nombre || 'Local'}</div>
+                                    <div class="mt-sub">${p.estado === 'finalizado' ? `⚽ ${p.golesLocal}` : ''}</div>
+                                </div>
+                            </div>
+                            <div class="match-score">
+                                <span class="score-num" style="color:var(--accent)">${p.golesLocal}</span>
+                                <span class="score-sep">-</span>
+                                <span class="score-num">${p.golesVisitante}</span>
+                            </div>
+                            <div class="match-team away">
+                                <div class="mt-badge" style="background:${getEquipoColor(p.visitante)}">${visit?.nombre?.split(' ').map(w => w[0]).join('').slice(0,3) || 'VIS'}</div>
+                                <div class="mt-info">
+                                    <div class="mt-name">${visit?.nombre || 'Visitante'}</div>
+                                    <div class="mt-sub">${p.estado === 'finalizado' ? `⚽ ${p.golesVisitante}` : ''}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            container.innerHTML = html || '<div style="padding:16px;color:var(--text-secondary);text-align:center">No hay partidos registrados.</div>';
+        }
+
+        function renderMobilePosiciones() {
+            const body = document.getElementById('mobileStandingBody');
+            if (!body) return;
+            const torneoId = appData.torneos[0]?.id;
+            const posiciones = torneoId ? calculatePosiciones(torneoId) : [];
+            if (!posiciones.length) {
+                body.innerHTML = '<tr><td colspan="10" style="text-align:center;color:var(--text-secondary);padding:16px">No hay posiciones disponibles.</td></tr>';
+                return;
+            }
+            body.innerHTML = posiciones.map((p, idx) => {
+                const eq = appData.equipos.find(e => e.id === p.equipo);
+                const dgDisplay = p.dg >= 0 ? `+${p.dg}` : p.dg;
+                return `
+                    <tr>
+                        <td class="st-pos ${idx === 0 ? 'pos-gold' : idx === 1 ? 'pos-silver' : idx === 2 ? 'pos-bronze' : ''}">${p.posicion}</td>
+                        <td><span class="st-team"><span class="dot" style="background:${getEquipoColor(p.equipo)}"></span>${eq?.nombre || 'N/A'}</span></td>
+                        <td>${p.pj}</td>
+                        <td>${p.pg}</td>
+                        <td>${p.pe}</td>
+                        <td>${p.pp}</td>
+                        <td>${p.gf}</td>
+                        <td>${p.gc}</td>
+                        <td style="color:${p.dg >= 0 ? 'var(--accent)' : 'var(--lose)'};font-weight:700">${dgDisplay}</td>
+                        <td class="st-pts">${p.pts}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderMobileDisciplina() {
+            const container = document.querySelector('#subtab-disc .m-card-body');
+            if (!container) return;
+            const list = appData.disciplinas.map((d, idx) => {
+                const j = appData.jugadores.find(j => j.id === d.jugador);
+                const eq = appData.equipos.find(e => e.id === j?.equipo);
+                return `
+                    <div class="disc-item">
+                        <div class="m-scorer-rank" style="background:#fce4ec;color:#c62828">${idx + 1}</div>
+                        <div class="m-scorer-info">
+                            <div class="m-scorer-name">${j?.nombre || 'N/A'}</div>
+                            <div class="m-scorer-team">${eq?.nombre || 'N/A'}</div>
+                        </div>
+                        <div class="disc-cards">
+                            <span>${d.tipo === 'amarilla' ? '1' : '0'}</span><span class="disc-card-icon" style="background:var(--yellow-card)"></span>
+                            <span>${d.tipo === 'roja' ? '1' : '0'}</span><span class="disc-card-icon" style="background:var(--red-card)"></span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            container.innerHTML = list || '<div style="padding:16px;color:var(--text-secondary);text-align:center">No hay sanciones registradas.</div>';
+        }
+
+        function refreshMobileView() {
+            renderTorneosCards();
+            renderMobilePartidos();
+            renderMobilePosiciones();
+            renderMobileDisciplina();
         }
 
         function crearTorneo() {
@@ -1838,6 +1888,7 @@
             };
             appData.torneos.push(nuevoTorneo);
             saveData();
+            renderTorneosCards();
             alert('✅ Torneo creado: ' + nombre);
         }
 
@@ -1876,6 +1927,7 @@
             };
             appData.jugadores.push(nuevoJugador);
             saveData();
+            renderMobileDisciplina();
             alert('✅ Jugador creado: ' + nombre);
         }
 
@@ -1883,13 +1935,14 @@
             const equipos = appData.equipos;
             if (equipos.length < 2) { alert('Necesitas al menos 2 equipos'); return; }
             const local = prompt('ID Local (0-' + (equipos.length-1) + '):', '0');
-            if (!local) return;
+            if (local === null) return;
             const idx1 = parseInt(local);
             if (idx1 < 0 || idx1 >= equipos.length) return;
             const visitante = prompt('ID Visitante (0-' + (equipos.length-1) + '):', '1');
-            if (!visitante) return;
+            if (visitante === null) return;
             const idx2 = parseInt(visitante);
             if (idx2 < 0 || idx2 >= equipos.length) return;
+            if (idx1 === idx2) { alert('El local y visitante deben ser diferentes'); return; }
             
             appData.partidos.push({
                 id: 'part_' + Date.now(),
@@ -1901,6 +1954,7 @@
                 fecha: new Date().toLocaleDateString('es-AR')
             });
             saveData();
+            renderMobilePartidos();
             alert('✅ Partido creado');
         }
 

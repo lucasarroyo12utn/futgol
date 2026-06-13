@@ -1521,7 +1521,6 @@
                     <div class="card-body">
                         <select id="fixture_torneo" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:6px;margin-bottom:20px" onchange="renderFixture()">
                             <option value="">-- Seleccionar torneo --</option>
-                            ${appData.torneos.map(t => `<option value="${t.id}">${t.nombre}</option>`).join('')}
                         </select>
                         <div id="fixtureContainer" style="display:grid;gap:12px"></div>
                     </div>
@@ -1563,7 +1562,6 @@
                     <div class="card-body">
                         <select id="posiciones_torneo" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:6px;margin-bottom:20px" onchange="renderPosiciones()">
                             <option value="">-- Seleccionar torneo --</option>
-                            ${appData.torneos.map(t => `<option value="${t.id}">${t.nombre}</option>`).join('')}
                         </select>
                         <table class="table" id="posicionesTable">
                             <thead>
@@ -1593,7 +1591,6 @@
                     <div class="card-body">
                         <select id="goleadores_torneo" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:6px;margin-bottom:20px" onchange="renderGoleadores()">
                             <option value="">-- Todos los torneos --</option>
-                            ${appData.torneos.map(t => `<option value="${t.id}">${t.nombre}</option>`).join('')}
                         </select>
                         <div id="goleadoresContainer" style="display:grid;gap:10px"></div>
                     </div>
@@ -1769,7 +1766,7 @@
     <button class="fab" onclick="openModal('general')" title="Acción rápida">+</button>
 
     <!-- ========== MODAL ========== -->
-    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+    <div class="modal-overlay" id="modalOverlay">
         <div class="modal" onclick="event.stopPropagation()">
             <div class="modal-header">
                 <h3 id="modalTitle">Nuevo Registro</h3>
@@ -1858,6 +1855,123 @@
         function getEquipoColor(id) {
             const eq = appData.equipos.find(e => e.id === id);
             return eq ? eq.color : '#999';
+        }
+
+        function getTorneoOptions(defaultValue = '') {
+            return `<option value="">-- Seleccionar torneo --</option>` + appData.torneos.map(t => `
+                <option value="${t.id}" ${t.id === defaultValue ? 'selected' : ''}>${t.nombre}</option>
+            `).join('');
+        }
+
+        function populateTorneoSelectors() {
+            const fixture = document.getElementById('fixture_torneo');
+            const posiciones = document.getElementById('posiciones_torneo');
+            const goleadores = document.getElementById('goleadores_torneo');
+            const partidoTorneo = document.getElementById('partido_torneo');
+
+            if (fixture) fixture.innerHTML = getTorneoOptions();
+            if (posiciones) posiciones.innerHTML = getTorneoOptions();
+            if (goleadores) goleadores.innerHTML = `<option value="">-- Todos los torneos --</option>` + appData.torneos.map(t => `
+                <option value="${t.id}">${t.nombre}</option>
+            `).join('');
+            if (partidoTorneo) partidoTorneo.innerHTML = getTorneoOptions();
+        }
+
+        function calculatePosiciones(torneo_id) {
+            const torneo = appData.torneos.find(t => t.id === torneo_id);
+            if (!torneo) return [];
+
+            const teams = appData.equipos.filter(e => e.categoria === torneo.categoria);
+            const stats = {};
+            teams.forEach(e => {
+                stats[e.id] = {equipo: e.id, posicion: 0, pj: 0, pg: 0, pe: 0, pp: 0, gf: 0, gc: 0, dg: 0, pts: 0};
+            });
+
+            const matches = appData.partidos.filter(p => p.torneo === torneo_id);
+            matches.forEach(match => {
+                const local = stats[match.local] || (stats[match.local] = {equipo: match.local, posicion: 0, pj: 0, pg: 0, pe: 0, pp: 0, gf: 0, gc: 0, dg: 0, pts: 0});
+                const visitante = stats[match.visitante] || (stats[match.visitante] = {equipo: match.visitante, posicion: 0, pj: 0, pg: 0, pe: 0, pp: 0, gf: 0, gc: 0, dg: 0, pts: 0});
+
+                local.pj += 1;
+                visitante.pj += 1;
+                local.gf += match.golesLocal || 0;
+                local.gc += match.golesVisitante || 0;
+                visitante.gf += match.golesVisitante || 0;
+                visitante.gc += match.golesLocal || 0;
+
+                if (match.golesLocal > match.golesVisitante) {
+                    local.pg += 1;
+                    visitante.pp += 1;
+                    local.pts += 3;
+                } else if (match.golesLocal < match.golesVisitante) {
+                    visitante.pg += 1;
+                    local.pp += 1;
+                    visitante.pts += 3;
+                } else {
+                    local.pe += 1;
+                    visitante.pe += 1;
+                    local.pts += 1;
+                    visitante.pts += 1;
+                }
+            });
+
+            Object.values(stats).forEach(row => {
+                row.dg = row.gf - row.gc;
+            });
+
+            return Object.values(stats).sort((a, b) => b.pts - a.pts || b.dg - a.dg || b.gf - a.gf).map((row, index) => ({...row, posicion: index + 1}));
+        }
+
+        function generateFixtureForTorneo(torneoId) {
+            const torneo = appData.torneos.find(t => t.id === torneoId);
+            if (!torneo) return [];
+
+            let equipos = appData.equipos.filter(e => e.categoria === torneo.categoria && e.estado === 'activo');
+            if (equipos.length < 2) {
+                equipos = appData.equipos.filter(e => e.estado === 'activo');
+            }
+            if (equipos.length < 2) {
+                return [];
+            }
+
+            const teamIds = equipos.map(e => e.id);
+            const hasBye = teamIds.length % 2 !== 0;
+            if (hasBye) teamIds.push('bye');
+
+            const n = teamIds.length;
+            const rounds = n - 1;
+            const half = n / 2;
+            const teams = [...teamIds];
+            const fixture = [];
+            const startDate = new Date();
+            for (let round = 0; round < rounds; round++) {
+                for (let i = 0; i < half; i++) {
+                    const home = teams[i];
+                    const away = teams[n - 1 - i];
+                    if (home === 'bye' || away === 'bye') continue;
+                    const matchDate = new Date(startDate);
+                    matchDate.setDate(startDate.getDate() + round * 7 + i);
+                    fixture.push({
+                        local: home,
+                        visitante: away,
+                        golesLocal: 0,
+                        golesVisitante: 0,
+                        estado: 'programado',
+                        fecha: matchDate.toLocaleDateString('es-AR'),
+                        cancha: `Cancha N°${(round % 4) + 1}`,
+                        torneo: torneoId
+                    });
+                }
+                teams.splice(1, 0, teams.pop());
+            }
+
+            appData.partidos = appData.partidos.filter(p => p.torneo !== torneoId);
+            fixture.forEach((match, idx) => {
+                match.id = `part_${Date.now()}_${idx}`;
+            });
+            appData.partidos.push(...fixture);
+            torneo.equipos = equipos.length;
+            return fixture;
         }
 
         // ========== RENDERIZAR TABLAS ==========
@@ -1964,8 +2078,19 @@
             const tbody = document.querySelector('#posicionesTable tbody');
             if (!tbody) return;
             
-            let posiciones = appData.posiciones.filter(p => !torneo_id || p.torneo === torneo_id);
+            let posiciones = [];
+            if (torneo_id) {
+                const stored = appData.posiciones.filter(p => p.torneo === torneo_id);
+                posiciones = stored.length ? stored : calculatePosiciones(torneo_id);
+            } else {
+                posiciones = appData.posiciones.length ? appData.posiciones : [];
+            }
             posiciones.sort((a, b) => a.posicion - b.posicion);
+            
+            if (!posiciones.length) {
+                tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;color:var(--text-secondary);padding:20px">No hay posiciones disponibles para este torneo.</td></tr>`;
+                return;
+            }
             
             tbody.innerHTML = posiciones.map(p => {
                 const eq = appData.equipos.find(e => e.id === p.equipo);
@@ -2432,7 +2557,7 @@
                     <div class="form-group">
                         <label>Torneo</label>
                         <select id="partido_torneo">
-                            ${appData.torneos.map(t => `<option value="${t.id}">${t.nombre}</option>`).join('')}
+                            ${getTorneoOptions()}
                         </select>
                     </div>
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
@@ -2465,6 +2590,21 @@
                     </div>
                 `;
                 window.modalType = 'partido';
+            } else if (type === 'fixture') {
+                title.textContent = '📅 Generar Fixture Automático';
+                body.innerHTML = `
+                    <div class="form-group">
+                        <label>Torneo</label>
+                        <select id="fixture_modal_torneo">
+                            ${getTorneoOptions()}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Equipos participantes</label>
+                        <p style="font-size:13px;color:var(--text-secondary);margin-top:8px">Se seleccionarán equipos activos en la categoría del torneo.</p>
+                    </div>
+                `;
+                window.modalType = 'fixture';
             } else if (type === 'cancha') {
                 title.textContent = '🏟️ Nueva Cancha';
                 body.innerHTML = `
@@ -2626,6 +2766,7 @@
                 const fecha = document.getElementById('partido_fecha')?.value;
                 
                 if (!local || !visitante) { alert('Completa local y visitante'); return; }
+                if (local === visitante) { alert('El local y visitante no pueden ser el mismo equipo'); return; }
                 
                 const nuevoPartido = {
                     id: 'part_' + Date.now(),
@@ -2638,6 +2779,12 @@
                     torneo: document.getElementById('partido_torneo')?.value || ''
                 };
                 appData.partidos.push(nuevoPartido);
+            } else if (window.modalType === 'fixture') {
+                const torneo = document.getElementById('fixture_modal_torneo')?.value;
+                if (!torneo) { alert('Selecciona un torneo'); return; }
+                const fixture = generateFixtureForTorneo(torneo);
+                if (!fixture.length) { alert('No se pudo generar la fixture. Asegúrate de tener equipos activos.'); return; }
+                alert(`✅ Fixture generado con ${fixture.length} partidos`);
             } else if (window.modalType === 'cancha') {
                 const nombre = document.getElementById('cancha_nombre')?.value;
                 if (!nombre) { alert('Ingresa nombre de cancha'); return; }
@@ -2691,6 +2838,7 @@
             saveData();
             closeModal();
             alert('✅ Registro guardado exitosamente');
+            populateTorneoSelectors();
             renderEquiposTable();
             renderJugadoresTable();
             renderTorneosCards();
@@ -2705,8 +2853,7 @@
             updateStats();
         }
 
-        function closeModal(event) {
-            if (event && event.target !== event.currentTarget) return;
+        function closeModal() {
             document.getElementById('modalOverlay').classList.remove('show');
         }
 
@@ -2717,6 +2864,7 @@
         // ========== INITIALIZATION ==========
         document.addEventListener('DOMContentLoaded', () => {
             loadData();
+            populateTorneoSelectors();
             renderEquiposTable();
             renderJugadoresTable();
             renderTorneosCards();
